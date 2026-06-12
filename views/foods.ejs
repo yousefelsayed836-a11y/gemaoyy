@@ -1,0 +1,55 @@
+<section class="calc-section">
+  <h1>سعرات الأكل 🍗</h1>
+  <p class="subtitle">اختار الأكلة وحدد الكمية بالجرام لمعرفة السعرات والبروتين والكارب والدهون.</p>
+
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <div class="calc-grid">
+    <form action="/foods" method="GET" class="card calc-form">
+      <div class="form-group">
+        <label for="food">الأكلة</label>
+        <select id="food" name="food" required>
+          <option value="">اختر الأكلة</option>
+          <% foods.forEach(f => { %>
+            <option value="<%= f.name %>" <%= selected === f.name ? 'selected' : '' %>><%= f.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="amount">الكمية (جرام)</label>
+        <input type="number" id="amount" name="amount" min="1" step="1" value="<%= amount %>">
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">احسب</button>
+    </form>
+
+    <% if (result) { %>
+      <div class="card calc-result">
+        <h2><%= result.name %></h2>
+        <p class="subtitle">لكل <%= result.grams %> جرام</p>
+        <div class="result-row highlight">
+          <span>السعرات الحرارية</span>
+          <strong><%= result.calories %> سعر</strong>
+        </div>
+        <hr>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-value"><%= result.protein %> جم</span>
+            <span class="stat-label">بروتين</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value"><%= result.carbs %> جم</span>
+            <span class="stat-label">كاربوهيدرات</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value"><%= result.fat %> جم</span>
+            <span class="stat-label">دهون</span>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</section>

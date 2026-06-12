@@ -1,0 +1,40 @@
+<section class="dashboard">
+  <h1>أهلاً <%= userName %> 👋</h1>
+
+  <% if (profile) { %>
+    <div class="card">
+      <h2>ملخص احتياجك اليومي</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-value"><%= profile.target_calories %></span>
+          <span class="stat-label">سعر حراري / يوم</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value"><%= profile.protein_g %> جم</span>
+          <span class="stat-label">بروتين</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value"><%= profile.carbs_g %> جم</span>
+          <span class="stat-label">كاربوهيدرات</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value"><%= profile.fat_g %> جم</span>
+          <span class="stat-label">دهون</span>
+        </div>
+      </div>
+      <a href="/calories" class="btn btn-outline">تعديل بياناتك</a>
+    </div>
+  <% } else { %>
+    <div class="card">
+      <h2>لسه محسبتش احتياجك اليومي</h2>
+      <p>هات وزنك وطولك وعمرك ومستوى نشاطك وهدفك عشان نحسبلك السعرات والبروتين والكارب والدهون.</p>
+      <a href="/calories" class="btn btn-primary">احسب دلوقتي</a>
+    </div>
+  <% } %>
+
+  <div class="card">
+    <h2>سعرات الأكل</h2>
+    <p>اعرف سعرات أي أكل من خلال اختيار الأكلة وتحديد الكمية بالجرام.</p>
+    <a href="/foods" class="btn btn-primary">روح لقسم سعرات الأكل</a>
+  </div>
+</section>

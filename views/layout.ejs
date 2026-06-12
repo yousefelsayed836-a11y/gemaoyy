@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جيماوي | Gemaoyy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="/" class="logo">💪 جيماوي</a>
+      <nav class="nav-links">
+        <a href="/">الرئيسية</a>
+        <% if (isLoggedIn) { %>
+          <a href="/dashboard">لوحة التحكم</a>
+          <a href="/calories">حاسبة السعرات</a>
+          <a href="/foods">سعرات الأكل</a>
+          <form action="/logout" method="POST" class="inline-form">
+            <button type="submit" class="btn btn-link">تسجيل الخروج</button>
+          </form>
+        <% } else { %>
+          <a href="/login">تسجيل الدخول</a>
+          <a href="/register" class="btn btn-small">اشترك دلوقتي</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <%- body %>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <%= new Date().getFullYear() %> جيماوي - موقعك الرياضي لتتبع أهدافك</p>
+    </div>
+  </footer>
+</body>
+</html>
