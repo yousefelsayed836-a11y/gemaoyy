@@ -9,6 +9,7 @@ const i18n = require('./middleware/i18n');
 const authRoutes = require('./routes/auth');
 const caloriesRoutes = require('./routes/calories');
 const foodsRoutes = require('./routes/foods');
+const bodyShapeRoutes = require('./routes/bodyshape');
 const db = require('./db/database');
 
 const app = express();
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 app.use('/', authRoutes);
 app.use('/', caloriesRoutes);
 app.use('/', foodsRoutes);
+app.use('/', bodyShapeRoutes);
 
 app.get('/', (req, res) => {
   res.render('home');

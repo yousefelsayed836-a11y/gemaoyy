@@ -21,11 +21,30 @@ body {
   background: var(--bg-dark);
   color: var(--text-light);
   line-height: 1.7;
+  font-size: 16px;
 }
 
 h1, h2, h3, .logo, .btn {
   font-family: 'Anton', 'Tahoma', 'Segoe UI', Arial, sans-serif;
   letter-spacing: 0.5px;
+}
+
+/* الإنجليزي بخط أكبر شوية، والعربي بخط Cairo */
+html[dir="ltr"] body {
+  font-size: 17.5px;
+}
+
+html[dir="rtl"] body {
+  font-family: 'Cairo', 'Tahoma', 'Segoe UI', Arial, sans-serif;
+}
+
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] .logo,
+html[dir="rtl"] .btn {
+  font-family: 'Cairo', 'Tahoma', 'Segoe UI', Arial, sans-serif;
+  font-weight: 800;
 }
 
 .container {
@@ -415,4 +434,34 @@ h1, h2, h3, .logo, .btn {
   color: var(--text-muted);
   border-top: 1px solid var(--border-color);
   font-size: 0.9rem;
+}
+
+/* Feature card extra button */
+.feature-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 8px 20px;
+  font-size: 0.9rem;
+}
+
+/* Body shape page */
+.bodyshape-result {
+  text-align: center;
+}
+
+.body-svg-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 20px;
+}
+
+.body-svg {
+  width: 160px;
+  height: 340px;
+}
+
+.subtitle.small {
+  font-size: 0.85rem;
+  margin-top: 16px;
+  margin-bottom: 0;
 }

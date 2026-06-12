@@ -31,6 +31,20 @@ db.exec(`
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
+
+  CREATE TABLE IF NOT EXISTS body_shapes (
+    user_id INTEGER PRIMARY KEY,
+    gender TEXT,
+    height REAL,
+    weight REAL,
+    chest REAL,
+    waist REAL,
+    hips REAL,
+    thigh REAL,
+    body_fat REAL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
 `);
 
 module.exports = db;
