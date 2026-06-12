@@ -1,9 +1,11 @@
 const express = require('express');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const SQLiteStore = require('connect-sqlite3')(session);
 
+const i18n = require('./middleware/i18n');
 const authRoutes = require('./routes/auth');
 const caloriesRoutes = require('./routes/calories');
 const foodsRoutes = require('./routes/foods');
@@ -19,6 +21,8 @@ app.set('layout', 'layout');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
+app.use(i18n);
 
 app.use(session({
   store: new SQLiteStore({ db: 'sessions.db', dir: path.join(__dirname, 'db') }),

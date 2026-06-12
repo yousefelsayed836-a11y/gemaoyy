@@ -1,52 +1,52 @@
 <section class="calc-section">
-  <h1>سعرات الأكل 🍗</h1>
-  <p class="subtitle">اختار الأكلة وحدد الكمية بالجرام لمعرفة السعرات والبروتين والكارب والدهون.</p>
+  <h1><%= t('foods_title') %></h1>
+  <p class="subtitle"><%= t('foods_subtitle') %></p>
 
   <% if (error) { %>
-    <div class="alert alert-error"><%= error %></div>
+    <div class="alert alert-error"><%= t(error) %></div>
   <% } %>
 
   <div class="calc-grid">
     <form action="/foods" method="GET" class="card calc-form">
       <div class="form-group">
-        <label for="food">الأكلة</label>
+        <label for="food"><%= t('label_food') %></label>
         <select id="food" name="food" required>
-          <option value="">اختر الأكلة</option>
+          <option value=""><%= t('opt_choose_food') %></option>
           <% foods.forEach(f => { %>
-            <option value="<%= f.name %>" <%= selected === f.name ? 'selected' : '' %>><%= f.name %></option>
+            <option value="<%= f.id %>" <%= selected === f.id ? 'selected' : '' %>><%= lang === 'ar' ? f.name_ar : f.name_en %></option>
           <% }) %>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="amount">الكمية (جرام)</label>
+        <label for="amount"><%= t('label_amount') %></label>
         <input type="number" id="amount" name="amount" min="1" step="1" value="<%= amount %>">
       </div>
 
-      <button type="submit" class="btn btn-primary btn-full">احسب</button>
+      <button type="submit" class="btn btn-primary btn-full"><%= t('btn_calculate') %></button>
     </form>
 
     <% if (result) { %>
       <div class="card calc-result">
         <h2><%= result.name %></h2>
-        <p class="subtitle">لكل <%= result.grams %> جرام</p>
+        <p class="subtitle"><%= t('result_per_grams', { grams: result.grams }) %></p>
         <div class="result-row highlight">
-          <span>السعرات الحرارية</span>
-          <strong><%= result.calories %> سعر</strong>
+          <span><%= t('result_calories') %></span>
+          <strong><%= result.calories %> <%= t('unit_cal') %></strong>
         </div>
         <hr>
         <div class="stats-grid">
           <div class="stat-box">
-            <span class="stat-value"><%= result.protein %> جم</span>
-            <span class="stat-label">بروتين</span>
+            <span class="stat-value"><%= result.protein %> <%= t('unit_g') %></span>
+            <span class="stat-label"><%= t('stat_protein') %></span>
           </div>
           <div class="stat-box">
-            <span class="stat-value"><%= result.carbs %> جم</span>
-            <span class="stat-label">كاربوهيدرات</span>
+            <span class="stat-value"><%= result.carbs %> <%= t('unit_g') %></span>
+            <span class="stat-label"><%= t('stat_carbs') %></span>
           </div>
           <div class="stat-box">
-            <span class="stat-value"><%= result.fat %> جم</span>
-            <span class="stat-label">دهون</span>
+            <span class="stat-value"><%= result.fat %> <%= t('unit_g') %></span>
+            <span class="stat-label"><%= t('stat_fat') %></span>
           </div>
         </div>
       </div>

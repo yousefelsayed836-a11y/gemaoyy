@@ -1,17 +1,16 @@
 <section class="hero">
   <div class="hero-text">
-    <h1>هدفك الرياضي... يبدأ من هنا 🔥</h1>
-    <p>سجل حسابك على <strong>جيماوي</strong> واحسب احتياجك اليومي من السعرات والبروتين والكارب والدهون،
-       وكمان اعرف سعرات أي أكل بسهولة.</p>
+    <h1><%= t('home_title') %></h1>
+    <p><%- t('home_subtitle') %></p>
     <% if (!isLoggedIn) { %>
       <div class="hero-actions">
-        <a href="/register" class="btn btn-primary">سجل حساب جديد</a>
-        <a href="/login" class="btn btn-outline">تسجيل الدخول</a>
+        <a href="/register" class="btn btn-primary"><%= t('home_signup') %></a>
+        <a href="/login" class="btn btn-outline"><%= t('home_login') %></a>
       </div>
     <% } else { %>
       <div class="hero-actions">
-        <a href="/calories" class="btn btn-primary">احسب سعراتك دلوقتي</a>
-        <a href="/foods" class="btn btn-outline">سعرات الأكل</a>
+        <a href="/calories" class="btn btn-primary"><%= t('home_calc_now') %></a>
+        <a href="/foods" class="btn btn-outline"><%= t('home_foods') %></a>
       </div>
     <% } %>
   </div>
@@ -20,18 +19,17 @@
 <section class="features">
   <div class="feature-card">
     <div class="feature-icon">📊</div>
-    <h3>حاسبة السعرات اليومية</h3>
-    <p>هات وزنك وطولك وعمرك ومستوى نشاطك وهدفك (تنشيف / ثبات / تضخيم)
-       وهنحسبلك السعرات والبروتين والكارب والدهون اللي تحتاجها يوميًا.</p>
+    <h3><%= t('feature1_title') %></h3>
+    <p><%= t('feature1_desc') %></p>
   </div>
   <div class="feature-card">
     <div class="feature-icon">🍗</div>
-    <h3>سعرات الأكل</h3>
-    <p>اختار الأكلة وحدد الكمية بالجرام، وهنوريك السعرات والبروتين والكارب والدهون فيها بالتفصيل.</p>
+    <h3><%= t('feature2_title') %></h3>
+    <p><%= t('feature2_desc') %></p>
   </div>
   <div class="feature-card">
     <div class="feature-icon">🔒</div>
-    <h3>حسابك محفوظ</h3>
-    <p>اعمل حساب وكل بياناتك ونتائجك بتفضل محفوظة عشان ترجع ليها في أي وقت.</p>
+    <h3><%= t('feature3_title') %></h3>
+    <p><%= t('feature3_desc') %></p>
   </div>
 </section>

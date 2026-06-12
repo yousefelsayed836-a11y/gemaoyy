@@ -9,19 +9,20 @@ const foods = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'foo
 
 router.get('/foods', requireAuth, (req, res) => {
   const { food, amount } = req.query;
+  const lang = res.locals.lang;
   let result = null;
   let error = null;
   let selectedFood = null;
 
   if (food) {
-    selectedFood = foods.find(f => f.name === food);
+    selectedFood = foods.find(f => f.id === food);
     if (!selectedFood) {
-      error = 'الأكل ده غير موجود في القاعدة';
+      error = 'err_food_not_found';
     } else {
       const grams = parseFloat(amount) || 100;
       const ratio = grams / 100;
       result = {
-        name: selectedFood.name,
+        name: lang === 'ar' ? selectedFood.name_ar : selectedFood.name_en,
         grams,
         calories: Math.round(selectedFood.calories * ratio),
         protein: Math.round(selectedFood.protein * ratio * 10) / 10,
@@ -31,8 +32,12 @@ router.get('/foods', requireAuth, (req, res) => {
     }
   }
 
+  const sortedFoods = [...foods].sort((a, b) =>
+    (lang === 'ar' ? a.name_ar : a.name_en).localeCompare(lang === 'ar' ? b.name_ar : b.name_en, lang)
+  );
+
   res.render('foods', {
-    foods: foods.sort((a, b) => a.name.localeCompare(b.name, 'ar')),
+    foods: sortedFoods,
     result,
     error,
     selected: food || '',

@@ -1,40 +1,40 @@
 <section class="dashboard">
-  <h1>أهلاً <%= userName %> 👋</h1>
+  <h1><%= t('dash_welcome') %> <%= userName %> 👋</h1>
 
   <% if (profile) { %>
     <div class="card">
-      <h2>ملخص احتياجك اليومي</h2>
+      <h2><%= t('dash_summary_title') %></h2>
       <div class="stats-grid">
         <div class="stat-box">
           <span class="stat-value"><%= profile.target_calories %></span>
-          <span class="stat-label">سعر حراري / يوم</span>
+          <span class="stat-label"><%= t('stat_calories') %></span>
         </div>
         <div class="stat-box">
-          <span class="stat-value"><%= profile.protein_g %> جم</span>
-          <span class="stat-label">بروتين</span>
+          <span class="stat-value"><%= profile.protein_g %> <%= t('unit_g') %></span>
+          <span class="stat-label"><%= t('stat_protein') %></span>
         </div>
         <div class="stat-box">
-          <span class="stat-value"><%= profile.carbs_g %> جم</span>
-          <span class="stat-label">كاربوهيدرات</span>
+          <span class="stat-value"><%= profile.carbs_g %> <%= t('unit_g') %></span>
+          <span class="stat-label"><%= t('stat_carbs') %></span>
         </div>
         <div class="stat-box">
-          <span class="stat-value"><%= profile.fat_g %> جم</span>
-          <span class="stat-label">دهون</span>
+          <span class="stat-value"><%= profile.fat_g %> <%= t('unit_g') %></span>
+          <span class="stat-label"><%= t('stat_fat') %></span>
         </div>
       </div>
-      <a href="/calories" class="btn btn-outline">تعديل بياناتك</a>
+      <a href="/calories" class="btn btn-outline"><%= t('dash_edit_data') %></a>
     </div>
   <% } else { %>
     <div class="card">
-      <h2>لسه محسبتش احتياجك اليومي</h2>
-      <p>هات وزنك وطولك وعمرك ومستوى نشاطك وهدفك عشان نحسبلك السعرات والبروتين والكارب والدهون.</p>
-      <a href="/calories" class="btn btn-primary">احسب دلوقتي</a>
+      <h2><%= t('dash_no_data_title') %></h2>
+      <p><%= t('dash_no_data_desc') %></p>
+      <a href="/calories" class="btn btn-primary"><%= t('dash_calc_now') %></a>
     </div>
   <% } %>
 
   <div class="card">
-    <h2>سعرات الأكل</h2>
-    <p>اعرف سعرات أي أكل من خلال اختيار الأكلة وتحديد الكمية بالجرام.</p>
-    <a href="/foods" class="btn btn-primary">روح لقسم سعرات الأكل</a>
+    <h2><%= t('dash_foods_title') %></h2>
+    <p><%= t('dash_foods_desc') %></p>
+    <a href="/foods" class="btn btn-primary"><%= t('dash_foods_btn') %></a>
   </div>
 </section>

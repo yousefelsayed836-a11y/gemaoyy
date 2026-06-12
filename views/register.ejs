@@ -1,28 +1,28 @@
 <section class="auth-section">
   <div class="auth-card">
-    <h2>إنشاء حساب جديد</h2>
+    <h2><%= t('register_title') %></h2>
     <% if (error) { %>
-      <div class="alert alert-error"><%= error %></div>
+      <div class="alert alert-error"><%= t(error) %></div>
     <% } %>
     <form action="/register" method="POST">
       <div class="form-group">
-        <label for="name">الاسم</label>
-        <input type="text" id="name" name="name" required placeholder="اسمك">
+        <label for="name"><%= t('label_name') %></label>
+        <input type="text" id="name" name="name" required placeholder="<%= t('placeholder_name') %>">
       </div>
       <div class="form-group">
-        <label for="email">البريد الإلكتروني</label>
-        <input type="email" id="email" name="email" required placeholder="example@email.com">
+        <label for="email"><%= t('label_email') %></label>
+        <input type="email" id="email" name="email" required placeholder="<%= t('placeholder_email') %>">
       </div>
       <div class="form-group">
-        <label for="password">كلمة المرور</label>
-        <input type="password" id="password" name="password" required placeholder="6 أحرف على الأقل">
+        <label for="password"><%= t('label_password') %></label>
+        <input type="password" id="password" name="password" required placeholder="<%= t('placeholder_password') %>">
       </div>
       <div class="form-group">
-        <label for="password2">تأكيد كلمة المرور</label>
-        <input type="password" id="password2" name="password2" required placeholder="أعد كتابة كلمة المرور">
+        <label for="password2"><%= t('label_password2') %></label>
+        <input type="password" id="password2" name="password2" required placeholder="<%= t('placeholder_password2') %>">
       </div>
-      <button type="submit" class="btn btn-primary btn-full">إنشاء الحساب</button>
+      <button type="submit" class="btn btn-primary btn-full"><%= t('btn_create_account') %></button>
     </form>
-    <p class="auth-switch">عندك حساب؟ <a href="/login">سجل دخولك</a></p>
+    <p class="auth-switch"><%= t('register_switch') %> <a href="/login"><%= t('register_switch_link') %></a></p>
   </div>
 </section>

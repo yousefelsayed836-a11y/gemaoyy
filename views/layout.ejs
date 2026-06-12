@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="<%= lang %>" dir="<%= dir %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>جيماوي | Gemaoyy</title>
+  <title><%= t('brand') %> | Gemaoyy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <header class="navbar">
     <div class="container navbar-inner">
-      <a href="/" class="logo">💪 جيماوي</a>
+      <a href="/" class="logo"><%= t('brand') %></a>
       <nav class="nav-links">
-        <a href="/">الرئيسية</a>
+        <a href="/"><%= t('nav_home') %></a>
         <% if (isLoggedIn) { %>
-          <a href="/dashboard">لوحة التحكم</a>
-          <a href="/calories">حاسبة السعرات</a>
-          <a href="/foods">سعرات الأكل</a>
+          <a href="/dashboard"><%= t('nav_dashboard') %></a>
+          <a href="/calories"><%= t('nav_calories') %></a>
+          <a href="/foods"><%= t('nav_foods') %></a>
           <form action="/logout" method="POST" class="inline-form">
-            <button type="submit" class="btn btn-link">تسجيل الخروج</button>
+            <button type="submit" class="btn btn-link"><%= t('nav_logout') %></button>
           </form>
         <% } else { %>
-          <a href="/login">تسجيل الدخول</a>
-          <a href="/register" class="btn btn-small">اشترك دلوقتي</a>
+          <a href="/login"><%= t('nav_login') %></a>
+          <a href="/register" class="btn btn-small"><%= t('nav_signup') %></a>
         <% } %>
+        <span class="lang-switch">
+          <a href="?lang=en" class="<%= lang === 'en' ? 'active' : '' %>">EN</a>
+          /
+          <a href="?lang=ar" class="<%= lang === 'ar' ? 'active' : '' %>">عربي</a>
+        </span>
       </nav>
     </div>
   </header>
@@ -33,7 +41,7 @@
 
   <footer class="footer">
     <div class="container">
-      <p>© <%= new Date().getFullYear() %> جيماوي - موقعك الرياضي لتتبع أهدافك</p>
+      <p>&copy; <%= new Date().getFullYear() %> <%= t('footer_text') %></p>
     </div>
   </footer>
 </body>

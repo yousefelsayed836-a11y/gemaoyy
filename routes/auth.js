@@ -14,18 +14,18 @@ router.post('/register', async (req, res) => {
   const { name, email, password, password2 } = req.body;
 
   if (!name || !email || !password || !password2) {
-    return res.render('register', { error: 'من فضلك اكمل كل الحقول' });
+    return res.render('register', { error: 'err_fill_fields' });
   }
   if (password !== password2) {
-    return res.render('register', { error: 'كلمتا المرور غير متطابقتين' });
+    return res.render('register', { error: 'err_password_mismatch' });
   }
   if (password.length < 6) {
-    return res.render('register', { error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
+    return res.render('register', { error: 'err_password_short' });
   }
 
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email.toLowerCase().trim());
   if (existing) {
-    return res.render('register', { error: 'البريد الإلكتروني مستخدم من قبل' });
+    return res.render('register', { error: 'err_email_taken' });
   }
 
   const hashed = await bcrypt.hash(password, 10);
@@ -48,12 +48,12 @@ router.post('/login', async (req, res) => {
 
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get((email || '').toLowerCase().trim());
   if (!user) {
-    return res.render('login', { error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' });
+    return res.render('login', { error: 'err_invalid_login' });
   }
 
   const match = await bcrypt.compare(password || '', user.password);
   if (!match) {
-    return res.render('login', { error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' });
+    return res.render('login', { error: 'err_invalid_login' });
   }
 
   req.session.userId = user.id;

@@ -71,7 +71,7 @@ router.post('/calories', requireAuth, (req, res) => {
   if (!gender || !ageNum || !weightNum || !heightNum || !activity || !goal) {
     return res.render('calories', {
       result: null,
-      error: 'من فضلك اكمل كل الحقول بشكل صحيح',
+      error: 'err_fill_correct',
       old: req.body
     });
   }

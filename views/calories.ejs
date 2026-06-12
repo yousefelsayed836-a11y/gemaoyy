@@ -1,91 +1,91 @@
 <section class="calc-section">
-  <h1>حاسبة السعرات اليومية 🔥</h1>
-  <p class="subtitle">هات بياناتك وهنحسبلك احتياجك اليومي من السعرات والبروتين والكارب والدهون.</p>
+  <h1><%= t('cal_title') %></h1>
+  <p class="subtitle"><%= t('cal_subtitle') %></p>
 
   <% if (error) { %>
-    <div class="alert alert-error"><%= error %></div>
+    <div class="alert alert-error"><%= t(error) %></div>
   <% } %>
 
   <div class="calc-grid">
     <form action="/calories" method="POST" class="card calc-form">
       <div class="form-group">
-        <label for="gender">الجنس</label>
+        <label for="gender"><%= t('label_gender') %></label>
         <select id="gender" name="gender" required>
-          <option value="">اختر</option>
-          <option value="male" <%= old.gender === 'male' ? 'selected' : '' %>>ذكر</option>
-          <option value="female" <%= old.gender === 'female' ? 'selected' : '' %>>أنثى</option>
+          <option value=""><%= t('opt_select') %></option>
+          <option value="male" <%= old.gender === 'male' ? 'selected' : '' %>><%= t('opt_male') %></option>
+          <option value="female" <%= old.gender === 'female' ? 'selected' : '' %>><%= t('opt_female') %></option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="age">السن (سنة)</label>
+        <label for="age"><%= t('label_age') %></label>
         <input type="number" id="age" name="age" min="10" max="100" required value="<%= old.age || '' %>">
       </div>
 
       <div class="form-group">
-        <label for="weight">الوزن (كجم)</label>
+        <label for="weight"><%= t('label_weight') %></label>
         <input type="number" id="weight" name="weight" min="30" max="300" step="0.1" required value="<%= old.weight || '' %>">
       </div>
 
       <div class="form-group">
-        <label for="height">الطول (سم)</label>
+        <label for="height"><%= t('label_height') %></label>
         <input type="number" id="height" name="height" min="100" max="250" step="0.1" required value="<%= old.height || '' %>">
       </div>
 
       <div class="form-group">
-        <label for="activity">مستوى النشاط اليومي</label>
+        <label for="activity"><%= t('label_activity') %></label>
         <select id="activity" name="activity" required>
-          <option value="">اختر</option>
-          <option value="sedentary" <%= old.activity === 'sedentary' ? 'selected' : '' %>>قليل الحركة (عمل مكتبي - بدون رياضة)</option>
-          <option value="light" <%= old.activity === 'light' ? 'selected' : '' %>>نشاط خفيف (تمرين 1-3 أيام أسبوعيًا)</option>
-          <option value="moderate" <%= old.activity === 'moderate' ? 'selected' : '' %>>نشاط متوسط (تمرين 3-5 أيام أسبوعيًا)</option>
-          <option value="active" <%= old.activity === 'active' ? 'selected' : '' %>>نشاط عالي (تمرين 6-7 أيام أسبوعيًا)</option>
-          <option value="very_active" <%= old.activity === 'very_active' ? 'selected' : '' %>>نشاط مكثف جدًا (رياضي / مجهود بدني عالي)</option>
+          <option value=""><%= t('opt_select') %></option>
+          <option value="sedentary" <%= old.activity === 'sedentary' ? 'selected' : '' %>><%= t('opt_sedentary') %></option>
+          <option value="light" <%= old.activity === 'light' ? 'selected' : '' %>><%= t('opt_light') %></option>
+          <option value="moderate" <%= old.activity === 'moderate' ? 'selected' : '' %>><%= t('opt_moderate') %></option>
+          <option value="active" <%= old.activity === 'active' ? 'selected' : '' %>><%= t('opt_active') %></option>
+          <option value="very_active" <%= old.activity === 'very_active' ? 'selected' : '' %>><%= t('opt_very_active') %></option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="goal">الهدف</label>
+        <label for="goal"><%= t('label_goal') %></label>
         <select id="goal" name="goal" required>
-          <option value="">اختر</option>
-          <option value="lose" <%= old.goal === 'lose' ? 'selected' : '' %>>خسارة وزن (تنشيف)</option>
-          <option value="maintain" <%= old.goal === 'maintain' ? 'selected' : '' %>>ثبات الوزن (المحافظة)</option>
-          <option value="gain" <%= old.goal === 'gain' ? 'selected' : '' %>>زيادة وزن (تضخيم)</option>
+          <option value=""><%= t('opt_select') %></option>
+          <option value="lose" <%= old.goal === 'lose' ? 'selected' : '' %>><%= t('opt_lose') %></option>
+          <option value="maintain" <%= old.goal === 'maintain' ? 'selected' : '' %>><%= t('opt_maintain') %></option>
+          <option value="gain" <%= old.goal === 'gain' ? 'selected' : '' %>><%= t('opt_gain') %></option>
         </select>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-full">احسب</button>
+      <button type="submit" class="btn btn-primary btn-full"><%= t('btn_calculate') %></button>
     </form>
 
     <% if (result) { %>
       <div class="card calc-result">
-        <h2>نتيجتك</h2>
+        <h2><%= t('result_title') %></h2>
         <div class="result-row">
-          <span>معدل الحرق الأساسي (BMR)</span>
-          <strong><%= result.bmr %> سعر</strong>
+          <span><%= t('result_bmr') %></span>
+          <strong><%= result.bmr %> <%= t('unit_cal') %></strong>
         </div>
         <div class="result-row">
-          <span>السعرات الكلية مع النشاط (TDEE)</span>
-          <strong><%= result.tdee %> سعر</strong>
+          <span><%= t('result_tdee') %></span>
+          <strong><%= result.tdee %> <%= t('unit_cal') %></strong>
         </div>
         <div class="result-row highlight">
-          <span>السعرات المطلوبة لهدفك</span>
-          <strong><%= result.target_calories %> سعر / يوم</strong>
+          <span><%= t('result_target') %></span>
+          <strong><%= result.target_calories %> <%= t('unit_cal_day') %></strong>
         </div>
         <hr>
-        <h3>توزيع الماكروز اليومي</h3>
+        <h3><%= t('result_macros_title') %></h3>
         <div class="stats-grid">
           <div class="stat-box">
-            <span class="stat-value"><%= result.protein_g %> جم</span>
-            <span class="stat-label">بروتين</span>
+            <span class="stat-value"><%= result.protein_g %> <%= t('unit_g') %></span>
+            <span class="stat-label"><%= t('stat_protein') %></span>
           </div>
           <div class="stat-box">
-            <span class="stat-value"><%= result.carbs_g %> جم</span>
-            <span class="stat-label">كاربوهيدرات</span>
+            <span class="stat-value"><%= result.carbs_g %> <%= t('unit_g') %></span>
+            <span class="stat-label"><%= t('stat_carbs') %></span>
           </div>
           <div class="stat-box">
-            <span class="stat-value"><%= result.fat_g %> جم</span>
-            <span class="stat-label">دهون</span>
+            <span class="stat-value"><%= result.fat_g %> <%= t('unit_g') %></span>
+            <span class="stat-label"><%= t('stat_fat') %></span>
           </div>
         </div>
       </div>
