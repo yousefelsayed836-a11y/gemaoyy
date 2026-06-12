@@ -62,6 +62,16 @@ function shadowMesh(geo, mat) {
   return mesh;
 }
 
+// كبسولة (سيلندر برأس نص كرة من الجهتين) عشان شكل الأطراف يبقا مستدير وواقعي
+function capsuleBetween(topY, bottomY, radius, mat) {
+  const span = Math.max(topY - bottomY, 0.1);
+  const length = Math.max(span - radius * 2, radius * 0.3);
+  const geo = new THREE.CapsuleGeometry(radius, length, 6, 16);
+  const mesh = shadowMesh(geo, mat);
+  mesh.position.y = (topY + bottomY) / 2;
+  return mesh;
+}
+
 function buildBody(data) {
   const isFemale = data.gender === 'female';
   const heightScale = (data.height || 170) / 170;
@@ -75,7 +85,7 @@ function buildBody(data) {
   // كل ما زادت نسبة الدهون، زاد حجم الخصر والحوض والبطن بشكل عام
   const roundness = Math.min(Math.max((data.body_fat - 15) * 0.3, 0), 8);
 
-  const shoulderR = isFemale ? chestR * 0.92 : chestR * 1.12;
+  const shoulderR = isFemale ? chestR * 0.95 : chestR * 1.15;
   const bustR = isFemale ? chestR * 1.05 : chestR;
   const waistFinal = (isFemale ? waistR * 0.85 : waistR) + roundness;
   const hipsFinal = (isFemale ? hipsR * 1.05 : hipsR * 0.95) + roundness * 0.7;
@@ -86,55 +96,69 @@ function buildBody(data) {
   const hipsColor = regionColor(data.hips, [data.chest, data.waist, data.hips, data.thigh]);
   const thighColor = regionColor(data.thigh, [data.chest, data.waist, data.hips, data.thigh]);
 
-  const torsoHeight = 52 * heightScale;
+  const torsoHeight = 54 * heightScale;
   const hipY = 0;
   const hipBulgeY = torsoHeight * 0.1;
   const bellyY = torsoHeight * 0.25;
-  const waistY = torsoHeight * 0.42;
-  const bustY = torsoHeight * 0.78;
+  const waistY = torsoHeight * 0.45;
+  const bustY = torsoHeight * 0.8;
   const shoulderY = torsoHeight;
-  const neckBaseY = shoulderY + 2.5 * heightScale;
+  const neckBaseY = shoulderY + 2 * heightScale;
   const neckY = shoulderY + 6 * heightScale;
   const headR = 9.5 * heightScale;
-  const headY = neckY + headR * 0.55;
+  const headY = neckY + headR * 0.65;
 
   const legLength = 78 * heightScale;
-  const kneeY = -legLength * 0.45;
-  const calfY = -legLength * 0.65;
+  const kneeY = -legLength * 0.47;
   const ankleY = -legLength;
 
   const armLength = 65 * heightScale;
-  const elbowY = shoulderY - armLength * 0.45;
+  const elbowY = shoulderY - armLength * 0.46;
   const wristY = shoulderY - armLength;
 
   const group = new THREE.Group();
 
   // الرجلين: نحسب مقاساتهم الأول عشان الجذع يضيق تدريجيًا فوقهم بدون فجوة
-  const legTopR = Math.max(thighR * 1.15, hipsFinal * 0.42, 1);
-  const legGap = Math.max(legTopR * 0.16, 0.8);
-  const legCenterX = legGap + legTopR;
-  const legHalfSpan = legCenterX + legTopR;
+  const thighTopR = Math.max(thighR * 1.05, 1);
+  const calfR = Math.max(thighR * 0.65, 0.8);
+  const legGap = Math.max(thighTopR * 0.25, 1);
+  const legCenterX = legGap + thighTopR;
+  const legHalfSpan = legCenterX + thighTopR;
 
-  const legPoints = [
-    new THREE.Vector2(legTopR, hipY),
-    new THREE.Vector2(Math.max(thighR * 1.05, 1), -legLength * 0.15),
-    new THREE.Vector2(Math.max(thighR * 0.82, 1), kneeY),
-    new THREE.Vector2(Math.max(thighR * 0.88, 1), calfY),
-    new THREE.Vector2(Math.max(thighR * 0.55, 1), ankleY)
-  ];
-  const legGeo = lathe(legPoints);
   const legMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...thighColor), roughness: 0.6 });
+  const footMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 });
+  const kneeJointGeo = new THREE.SphereGeometry(calfR * 1.05, 20, 20);
 
-  const leftLeg = shadowMesh(legGeo, legMat);
-  leftLeg.position.set(-legCenterX, 0, 0);
-  group.add(leftLeg);
+  [-1, 1].forEach((side) => {
+    const x = side * legCenterX;
 
-  const rightLeg = shadowMesh(legGeo.clone(), legMat);
-  rightLeg.position.set(legCenterX, 0, 0);
-  group.add(rightLeg);
+    const thigh = capsuleBetween(hipY + thighTopR * 0.3, kneeY, thighTopR, legMat);
+    thigh.position.x = x;
+    group.add(thigh);
 
-  // الجذع: حوض - بطن - خصر - صدر - كتف - رقبة بتدرج لوني حسب تركيز الدهون
-  // قاعدة الجذع تضيق لتلاقي عرض الرجلين عشان الاتصال يبقا سلس
+    const calf = capsuleBetween(kneeY, ankleY + calfR, calfR, legMat);
+    calf.position.x = x;
+    group.add(calf);
+
+    const knee = shadowMesh(kneeJointGeo.clone(), legMat);
+    knee.position.set(x, kneeY, 0);
+    group.add(knee);
+
+    const foot = shadowMesh(new THREE.BoxGeometry(thighTopR * 1.7, 2.5, thighTopR * 2.6), footMat);
+    foot.position.set(x, ankleY - 1, thighTopR * 0.7);
+    group.add(foot);
+  });
+
+  // الجذع: نكبر الفروق بين الحوض/الخصر/الصدر/الكتف عشان شكل الخصر يبان واضح وواقعي
+  const torsoMean = (hipsFinal + waistFinal + bustR + shoulderR) / 4;
+  const exaggerate = (r) => torsoMean + (r - torsoMean) * 1.35;
+
+  const hipsV = hipsFinal;
+  const bellyV = exaggerate(bellyFinal);
+  const waistV = exaggerate(waistFinal);
+  const bustV = exaggerate(bustR);
+  const shoulderV = exaggerate(shoulderR);
+
   const torsoStops = [
     { y: hipY, color: hipsColor },
     { y: hipBulgeY, color: hipsColor },
@@ -146,85 +170,75 @@ function buildBody(data) {
   ];
   const torsoPoints = [
     new THREE.Vector2(Math.max(legHalfSpan, 0.5), hipY),
-    new THREE.Vector2(Math.max(hipsFinal, 0.5), hipBulgeY),
-    new THREE.Vector2(Math.max(bellyFinal, 0.5), bellyY),
-    new THREE.Vector2(Math.max(waistFinal, 0.5), waistY),
-    new THREE.Vector2(Math.max(bustR, 0.5), bustY),
-    new THREE.Vector2(Math.max(shoulderR, 0.5), shoulderY),
-    new THREE.Vector2(Math.max(shoulderR * 0.58, 0.5), neckBaseY),
-    new THREE.Vector2(Math.max(shoulderR * 0.48, 0.5), neckY)
+    new THREE.Vector2(Math.max(hipsV, 0.5), hipBulgeY),
+    new THREE.Vector2(Math.max(bellyV, 0.5), bellyY),
+    new THREE.Vector2(Math.max(waistV, 0.5), waistY),
+    new THREE.Vector2(Math.max(bustV, 0.5), bustY),
+    new THREE.Vector2(Math.max(shoulderV, 0.5), shoulderY),
+    new THREE.Vector2(Math.max(shoulderV * 0.55, 0.5), neckBaseY),
+    new THREE.Vector2(Math.max(shoulderV * 0.45, 0.5), neckY)
   ];
   const torsoGeo = latheWithGradient(torsoPoints, torsoStops);
   const torsoMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, metalness: 0.05 });
   group.add(shadowMesh(torsoGeo, torsoMat));
 
-  // الرأس
-  const headGeo = new THREE.SphereGeometry(headR, 32, 32);
-  const skinMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...SKIN), roughness: 0.6 });
-  const head = shadowMesh(headGeo, skinMat);
-  head.position.y = headY;
-  group.add(head);
-
-  // الأقدام
-  const footGeo = new THREE.BoxGeometry(legTopR * 1.6, 2.5, legTopR * 2.4);
-  const footMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 });
-  const leftFoot = shadowMesh(footGeo, footMat);
-  leftFoot.position.set(leftLeg.position.x, ankleY - 1, legTopR * 0.6);
-  group.add(leftFoot);
-  const rightFoot = shadowMesh(footGeo.clone(), footMat);
-  rightFoot.position.set(rightLeg.position.x, ankleY - 1, legTopR * 0.6);
-  group.add(rightFoot);
-
-  // الذراعين
-  const armPoints = [
-    new THREE.Vector2(Math.max(armR * 1.12, 0.5), shoulderY),
-    new THREE.Vector2(Math.max(armR, 0.5), elbowY),
-    new THREE.Vector2(Math.max(armR * 0.85, 0.5), shoulderY - armLength * 0.9),
-    new THREE.Vector2(Math.max(armR * 0.7, 0.5), wristY)
-  ];
-  const armGeo = lathe(armPoints, 24);
-  const armOffsetX = shoulderR * 0.8 + Math.max(armR * 0.55, 1);
-
-  const leftArm = shadowMesh(armGeo, skinMat);
-  leftArm.position.set(-armOffsetX, 0, 0);
-  group.add(leftArm);
-
-  const rightArm = shadowMesh(armGeo.clone(), skinMat);
-  rightArm.position.set(armOffsetX, 0, 0);
-  group.add(rightArm);
-
-  // مفاصل الكتف عشان تربط الذراعين بالجذع بشكل سلس بدون فجوات
-  const shoulderJointGeo = new THREE.SphereGeometry(Math.max(armR * 1.25, shoulderR * 0.3, 1.5), 24, 24);
-  const leftShoulderJoint = shadowMesh(shoulderJointGeo, skinMat);
-  leftShoulderJoint.position.set(-armOffsetX * 0.92, shoulderY - armR * 0.15, 0);
-  group.add(leftShoulderJoint);
-  const rightShoulderJoint = shadowMesh(shoulderJointGeo.clone(), skinMat);
-  rightShoulderJoint.position.set(armOffsetX * 0.92, shoulderY - armR * 0.15, 0);
-  group.add(rightShoulderJoint);
-
-  // الكفوف
-  const handGeo = new THREE.SphereGeometry(Math.max(armR * 0.75, 1), 16, 16);
-  const leftHand = shadowMesh(handGeo, skinMat);
-  leftHand.position.set(-armOffsetX, wristY - armR * 0.5, 0);
-  group.add(leftHand);
-  const rightHand = shadowMesh(handGeo.clone(), skinMat);
-  rightHand.position.set(armOffsetX, wristY - armR * 0.5, 0);
-  group.add(rightHand);
-
-  // الملابس الداخلية فوق الحوض (شكل واقعي شبيه بصور المسح الجسدي) بتغطي اتصال الجذع بالرجلين
-  const wearTopY = waistY * 0.55;
-  const wearBottomY = -legLength * 0.08;
+  // الملابس الداخلية فوق الحوض بتغطي اتصال الجذع بالرجلين
+  const wearTopY = waistY * 0.5;
+  const wearBottomY = -legLength * 0.06;
   const wearPoints = [
     new THREE.Vector2(Math.max(legHalfSpan * 1.05, 0.6), wearBottomY),
-    new THREE.Vector2(Math.max(hipsFinal * 1.05, 0.6), hipBulgeY),
-    new THREE.Vector2(Math.max((hipsFinal + waistFinal) / 2 * 1.03, 0.6), wearTopY)
+    new THREE.Vector2(Math.max(hipsV * 1.05, 0.6), hipBulgeY),
+    new THREE.Vector2(Math.max((hipsV + waistV) / 2 * 1.03, 0.6), wearTopY)
   ];
   const wearGeo = lathe(wearPoints);
   const wearMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...UNDERWEAR), roughness: 0.85 });
   group.add(shadowMesh(wearGeo, wearMat));
 
-  // نوسط الموديل رأسيًا حوالي منتصف الجذع
+  // الرأس: كورة بيضاوية شوية عشان تبان شكل راس بدل كورة مكتملة
+  const skinMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...SKIN), roughness: 0.6 });
+  const headGeo = new THREE.SphereGeometry(headR, 32, 32);
+  const head = shadowMesh(headGeo, skinMat);
+  head.position.y = headY;
+  head.scale.set(0.92, 1.12, 0.96);
+  group.add(head);
+
+  // الذراعين بوضعية مفتوحة شوية (A-pose) عشان يبانوا متصلين بالجسم بشكل طبيعي
+  const upperArmR = Math.max(armR * 0.95, 1.2);
+  const forearmR = Math.max(armR * 0.72, 1);
+  const armOffsetX = shoulderV + upperArmR * 0.85;
+  const armSpread = THREE.MathUtils.degToRad(10);
+
+  [-1, 1].forEach((side) => {
+    const pivot = new THREE.Group();
+    pivot.position.set(side * armOffsetX, shoulderY - upperArmR * 0.4, 0);
+    pivot.rotation.z = -side * armSpread;
+    group.add(pivot);
+
+    const upperLen = (shoulderY - elbowY);
+    const foreLen = (elbowY - wristY);
+
+    const upperArm = capsuleBetween(0, -upperLen, upperArmR, skinMat);
+    pivot.add(upperArm);
+
+    const forearm = capsuleBetween(-upperLen, -upperLen - foreLen, forearmR, skinMat);
+    pivot.add(forearm);
+
+    const elbow = shadowMesh(new THREE.SphereGeometry(forearmR * 1.05, 18, 18), skinMat);
+    elbow.position.y = -upperLen;
+    pivot.add(elbow);
+
+    const shoulderJoint = shadowMesh(new THREE.SphereGeometry(upperArmR * 1.05, 20, 20), skinMat);
+    shoulderJoint.position.y = 0;
+    pivot.add(shoulderJoint);
+
+    const hand = shadowMesh(new THREE.SphereGeometry(forearmR * 0.95, 16, 16), skinMat);
+    hand.position.y = -upperLen - foreLen - forearmR * 0.4;
+    pivot.add(hand);
+  });
+
+  // نوسط الموديل رأسيًا حوالي منتصف الجذع، ونقلل عمقه شوية عشان يبان أكتر واقعي
   group.position.y = -(shoulderY + ankleY) / 2;
+  group.scale.z = 0.85;
 
   return group;
 }
