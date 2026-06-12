@@ -1,7 +1,6 @@
 const express = require('express');
 const db = require('../db/database');
 const { requireAuth } = require('../middleware/auth');
-const { generateBodySvg } = require('../lib/bodySvg');
 
 const router = express.Router();
 
@@ -14,15 +13,7 @@ function estimateBodyFat({ gender, height, waist }) {
 
 router.get('/body-shape', requireAuth, (req, res) => {
   const saved = db.prepare('SELECT * FROM body_shapes WHERE user_id = ?').get(req.session.userId);
-
-  let result = null;
-  let svg = null;
-  if (saved) {
-    result = saved;
-    svg = generateBodySvg(saved);
-  }
-
-  res.render('bodyshape', { result, svg, error: null, old: saved || {} });
+  res.render('bodyshape', { result: saved || null, error: null, old: saved || {} });
 });
 
 router.post('/body-shape', requireAuth, (req, res) => {
@@ -40,7 +31,7 @@ router.post('/body-shape', requireAuth, (req, res) => {
   };
 
   if (!gender || Object.values(data).some(v => typeof v === 'number' && (!v || v <= 0))) {
-    return res.render('bodyshape', { result: null, svg: null, error: 'err_fill_correct', old: req.body });
+    return res.render('bodyshape', { result: null, error: 'err_fill_correct', old: req.body });
   }
 
   const bodyFat = estimateBodyFat(data);
@@ -54,9 +45,8 @@ router.post('/body-shape', requireAuth, (req, res) => {
   `).run({ user_id: req.session.userId, body_fat: bodyFat, ...data });
 
   const result = db.prepare('SELECT * FROM body_shapes WHERE user_id = ?').get(req.session.userId);
-  const svg = generateBodySvg(result);
 
-  res.render('bodyshape', { result, svg, error: null, old: req.body });
+  res.render('bodyshape', { result, error: null, old: req.body });
 });
 
 module.exports = router;

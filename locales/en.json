@@ -111,6 +111,7 @@
   "label_thigh": "Thigh (cm)",
   "label_arm": "Arm (cm)",
   "bodyshape_result_title": "Your Estimated Body Shape",
+  "bodyshape_drag_hint": "Drag to rotate the 3D model and view it from different angles.",
   "bodyshape_bodyfat": "Estimated Body Fat",
   "bodyshape_disclaimer": "This is just a rough visual estimate, not a medical measurement.",
   "dash_bodyshape_title": "Body Shape Estimator",

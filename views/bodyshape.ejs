@@ -58,9 +58,21 @@
     <% if (result) { %>
       <div class="card calc-result bodyshape-result">
         <h2><%= t('bodyshape_result_title') %></h2>
-        <div class="body-svg-wrap">
-          <%- svg %>
-        </div>
+        <div id="body3d-canvas" class="body3d-canvas"></div>
+        <p class="subtitle small"><%= t('bodyshape_drag_hint') %></p>
+        <script>
+          window.BODY_DATA = {
+            gender: <%- JSON.stringify(result.gender) %>,
+            chest: <%= result.chest %>,
+            waist: <%= result.waist %>,
+            hips: <%= result.hips %>,
+            thigh: <%= result.thigh %>,
+            arm: <%= result.arm %>,
+            height: <%= result.height %>,
+            body_fat: <%= result.body_fat %>
+          };
+        </script>
+        <script type="module" src="/js/body3d.js"></script>
         <div class="result-row highlight">
           <span><%= t('bodyshape_bodyfat') %></span>
           <strong><%= result.body_fat %>%</strong>
