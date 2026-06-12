@@ -3,7 +3,9 @@ import { OrbitControls } from '/vendor/three/examples/jsm/controls/OrbitControls
 
 const SKIN = [1, 200 / 255, 165 / 255];
 const FAT = [214 / 255, 48 / 255, 49 / 255];
+const UNDERWEAR = [0.55, 0.56, 0.6];
 const TWO_PI = Math.PI * 2;
+const SEGMENTS = 64;
 
 function lerpColor(c1, c2, t) {
   return [
@@ -32,8 +34,15 @@ function colorAt(y, stops) {
   return y < stops[0].y ? stops[0].color : stops[stops.length - 1].color;
 }
 
-function latheWithGradient(points, stops, segments = 48) {
-  const geometry = new THREE.LatheGeometry(points, segments);
+// نعمل تنعيم لمنحنى الجسم بدل الخطوط المستقيمة بين النقاط، عشان يبقا الشكل أنسيابي وواقعي
+function smoothProfile(points, divisions = 6) {
+  const curve = new THREE.SplineCurve(points);
+  return curve.getPoints(Math.max(points.length * divisions, 32));
+}
+
+function latheWithGradient(points, stops, segments = SEGMENTS) {
+  const smooth = smoothProfile(points);
+  const geometry = new THREE.LatheGeometry(smooth, segments);
   const pos = geometry.attributes.position;
   const colors = new Float32Array(pos.count * 3);
   for (let i = 0; i < pos.count; i++) {
@@ -47,10 +56,18 @@ function latheWithGradient(points, stops, segments = 48) {
   return geometry;
 }
 
-function lathe(points, segments = 48) {
-  const geometry = new THREE.LatheGeometry(points, segments);
+function lathe(points, segments = SEGMENTS) {
+  const smooth = smoothProfile(points);
+  const geometry = new THREE.LatheGeometry(smooth, segments);
   geometry.computeVertexNormals();
   return geometry;
+}
+
+function shadowMesh(geo, mat) {
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
 }
 
 function buildBody(data) {
@@ -63,13 +80,14 @@ function buildBody(data) {
   const thighR = data.thigh / TWO_PI;
   const armR = data.arm / TWO_PI;
 
-  // كل ما زادت نسبة الدهون، زاد حجم الخصر والحوض بشكل عام
+  // كل ما زادت نسبة الدهون، زاد حجم الخصر والحوض والبطن بشكل عام
   const roundness = Math.min(Math.max((data.body_fat - 15) * 0.3, 0), 8);
 
   const shoulderR = isFemale ? chestR * 0.92 : chestR * 1.12;
-  const bustR = chestR;
+  const bustR = isFemale ? chestR * 1.05 : chestR;
   const waistFinal = (isFemale ? waistR * 0.85 : waistR) + roundness;
   const hipsFinal = (isFemale ? hipsR * 1.05 : hipsR * 0.95) + roundness * 0.7;
+  const bellyFinal = Math.max(waistFinal, (waistFinal + hipsFinal) / 2 + roundness * 0.4);
 
   const chestColor = regionColor(data.chest, [data.chest, data.waist, data.hips, data.thigh]);
   const waistColor = regionColor(data.waist, [data.chest, data.waist, data.hips, data.thigh]);
@@ -78,9 +96,11 @@ function buildBody(data) {
 
   const torsoHeight = 50 * heightScale;
   const hipY = 0;
+  const bellyY = torsoHeight * 0.18;
   const waistY = torsoHeight * 0.35;
   const bustY = torsoHeight * 0.75;
   const shoulderY = torsoHeight;
+  const neckBaseY = shoulderY + 3 * heightScale;
   const neckY = shoulderY + 8 * heightScale;
   const headR = 10 * heightScale;
   const headY = neckY + headR * 0.95;
@@ -96,9 +116,10 @@ function buildBody(data) {
 
   const group = new THREE.Group();
 
-  // الجذع: كتف - صدر - خصر - حوض - رقبة بتدرج لوني حسب تركيز الدهون
+  // الجذع: حوض - بطن - خصر - صدر - كتف - رقبة بتدرج لوني حسب تركيز الدهون
   const torsoStops = [
     { y: hipY, color: hipsColor },
+    { y: bellyY, color: lerpColor(hipsColor, waistColor, 0.5) },
     { y: waistY, color: waistColor },
     { y: bustY, color: chestColor },
     { y: shoulderY, color: chestColor },
@@ -106,20 +127,25 @@ function buildBody(data) {
   ];
   const torsoPoints = [
     new THREE.Vector2(Math.max(hipsFinal, 0.5), hipY),
+    new THREE.Vector2(Math.max(bellyFinal, 0.5), bellyY),
     new THREE.Vector2(Math.max(waistFinal, 0.5), waistY),
     new THREE.Vector2(Math.max(bustR, 0.5), bustY),
     new THREE.Vector2(Math.max(shoulderR, 0.5), shoulderY),
-    new THREE.Vector2(Math.max(shoulderR * 0.45, 0.5), neckY)
+    new THREE.Vector2(Math.max(shoulderR * 0.55, 0.5), neckBaseY),
+    new THREE.Vector2(Math.max(shoulderR * 0.42, 0.5), neckY)
   ];
   const torsoGeo = latheWithGradient(torsoPoints, torsoStops);
-  const torsoMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, metalness: 0.05 });
-  const torso = new THREE.Mesh(torsoGeo, torsoMat);
-  group.add(torso);
+  const torsoMat = new THREE.MeshPhysicalMaterial({
+    vertexColors: true, roughness: 0.55, metalness: 0.02, clearcoat: 0.05, clearcoatRoughness: 0.6
+  });
+  group.add(shadowMesh(torsoGeo, torsoMat));
 
   // الرأس
   const headGeo = new THREE.SphereGeometry(headR, 32, 32);
-  const skinMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...SKIN), roughness: 0.6 });
-  const head = new THREE.Mesh(headGeo, skinMat);
+  const skinMat = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color(...SKIN), roughness: 0.55, clearcoat: 0.05, clearcoatRoughness: 0.6
+  });
+  const head = shadowMesh(headGeo, skinMat);
   head.position.y = headY;
   group.add(head);
 
@@ -133,24 +159,26 @@ function buildBody(data) {
     new THREE.Vector2(Math.max(thighR * 0.55, 1), ankleY)
   ];
   const legGeo = lathe(legPoints);
-  const legMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...thighColor), roughness: 0.6 });
+  const legMat = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color(...thighColor), roughness: 0.55, clearcoat: 0.05, clearcoatRoughness: 0.6
+  });
   const legGap = Math.max(legTopR * 0.35, 1.5);
 
-  const leftLeg = new THREE.Mesh(legGeo, legMat);
+  const leftLeg = shadowMesh(legGeo, legMat);
   leftLeg.position.set(-legGap - legTopR, 0, 0);
   group.add(leftLeg);
 
-  const rightLeg = new THREE.Mesh(legGeo.clone(), legMat);
+  const rightLeg = shadowMesh(legGeo.clone(), legMat);
   rightLeg.position.set(legGap + legTopR, 0, 0);
   group.add(rightLeg);
 
   // الأقدام
   const footGeo = new THREE.BoxGeometry(legTopR * 1.6, 2.5, legTopR * 2.4);
   const footMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 });
-  const leftFoot = new THREE.Mesh(footGeo, footMat);
+  const leftFoot = shadowMesh(footGeo, footMat);
   leftFoot.position.set(leftLeg.position.x, ankleY - 1, legTopR * 0.6);
   group.add(leftFoot);
-  const rightFoot = new THREE.Mesh(footGeo.clone(), footMat);
+  const rightFoot = shadowMesh(footGeo.clone(), footMat);
   rightFoot.position.set(rightLeg.position.x, ankleY - 1, legTopR * 0.6);
   group.add(rightFoot);
 
@@ -161,25 +189,45 @@ function buildBody(data) {
     new THREE.Vector2(Math.max(armR * 0.85, 0.5), shoulderY - armLength * 0.9),
     new THREE.Vector2(Math.max(armR * 0.7, 0.5), wristY)
   ];
-  const armGeo = lathe(armPoints, 24);
+  const armGeo = lathe(armPoints, 32);
   const armOffsetX = shoulderR + Math.max(armR * 0.7, 1.5);
 
-  const leftArm = new THREE.Mesh(armGeo, skinMat);
+  const leftArm = shadowMesh(armGeo, skinMat);
   leftArm.position.set(-armOffsetX, 0, 0);
   group.add(leftArm);
 
-  const rightArm = new THREE.Mesh(armGeo.clone(), skinMat);
+  const rightArm = shadowMesh(armGeo.clone(), skinMat);
   rightArm.position.set(armOffsetX, 0, 0);
   group.add(rightArm);
 
+  // مفاصل الكتف عشان تربط الذراعين بالجذع بشكل سلس بدون فجوات
+  const shoulderJointGeo = new THREE.SphereGeometry(Math.max(armR * 1.15, 1.5), 24, 24);
+  const leftShoulderJoint = shadowMesh(shoulderJointGeo, skinMat);
+  leftShoulderJoint.position.set(-armOffsetX, shoulderY - armR * 0.2, 0);
+  group.add(leftShoulderJoint);
+  const rightShoulderJoint = shadowMesh(shoulderJointGeo.clone(), skinMat);
+  rightShoulderJoint.position.set(armOffsetX, shoulderY - armR * 0.2, 0);
+  group.add(rightShoulderJoint);
+
   // الكفوف
   const handGeo = new THREE.SphereGeometry(Math.max(armR * 0.75, 1), 16, 16);
-  const leftHand = new THREE.Mesh(handGeo, skinMat);
+  const leftHand = shadowMesh(handGeo, skinMat);
   leftHand.position.set(-armOffsetX, wristY - armR * 0.5, 0);
   group.add(leftHand);
-  const rightHand = new THREE.Mesh(handGeo.clone(), skinMat);
+  const rightHand = shadowMesh(handGeo.clone(), skinMat);
   rightHand.position.set(armOffsetX, wristY - armR * 0.5, 0);
   group.add(rightHand);
+
+  // الملابس الداخلية فوق الحوض (شكل واقعي شبيه بصور المسح الجسدي)
+  const wearTopY = waistY * 0.5;
+  const wearPoints = [
+    new THREE.Vector2(Math.max(hipsFinal * 1.04, 0.6), hipY - 1.5 * heightScale),
+    new THREE.Vector2(Math.max(hipsFinal * 1.06, 0.6), hipY + (wearTopY - hipY) * 0.45),
+    new THREE.Vector2(Math.max((hipsFinal + waistFinal) / 2 * 1.05, 0.6), wearTopY)
+  ];
+  const wearGeo = lathe(wearPoints);
+  const wearMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...UNDERWEAR), roughness: 0.85 });
+  group.add(shadowMesh(wearGeo, wearMat));
 
   // نوسط الموديل رأسيًا حوالي منتصف الجذع
   group.position.y = -(shoulderY + ankleY) / 2;
@@ -198,15 +246,29 @@ function init() {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
   container.appendChild(renderer.domElement);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x2a1a14, 0.55));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.6);
   keyLight.position.set(80, 120, 150);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(1024, 1024);
   scene.add(keyLight);
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.45);
   fillLight.position.set(-100, 40, -80);
   scene.add(fillLight);
+
+  // إضاءة خلفية خفيفة عشان تفرق الموديل عن الخلفية وتدي عمق
+  const rimLight = new THREE.DirectionalLight(0xaad4ff, 0.5);
+  rimLight.position.set(0, 60, -150);
+  scene.add(rimLight);
 
   const body = buildBody(window.BODY_DATA);
   scene.add(body);
@@ -217,6 +279,23 @@ function init() {
   const center = box.getCenter(new THREE.Vector3());
   const maxDim = Math.max(size.x, size.y, size.z);
   const fitDistance = (maxDim / (2 * Math.tan((camera.fov * Math.PI) / 360))) * 1.25;
+
+  keyLight.shadow.camera.near = 0.1;
+  keyLight.shadow.camera.far = maxDim * 6;
+  keyLight.shadow.camera.left = -maxDim;
+  keyLight.shadow.camera.right = maxDim;
+  keyLight.shadow.camera.top = maxDim;
+  keyLight.shadow.camera.bottom = -maxDim;
+  keyLight.shadow.camera.updateProjectionMatrix();
+
+  // أرضية شفافة بتستقبل الظل فقط عشان تثبت الموديل بصريًا
+  const groundGeo = new THREE.PlaneGeometry(maxDim * 4, maxDim * 4);
+  const groundMat = new THREE.ShadowMaterial({ opacity: 0.28 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = box.min.y;
+  ground.receiveShadow = true;
+  scene.add(ground);
 
   camera.position.set(center.x, center.y, center.z + fitDistance);
   camera.lookAt(center);
