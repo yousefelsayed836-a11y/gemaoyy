@@ -41,10 +41,16 @@ db.exec(`
     waist REAL,
     hips REAL,
     thigh REAL,
+    arm REAL,
     body_fat REAL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
 `);
+
+const bodyShapeColumns = db.prepare('PRAGMA table_info(body_shapes)').all().map(c => c.name);
+if (!bodyShapeColumns.includes('arm')) {
+  db.exec('ALTER TABLE body_shapes ADD COLUMN arm REAL');
+}
 
 module.exports = db;

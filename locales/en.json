@@ -109,6 +109,7 @@
   "label_waist": "Waist / Abdomen (cm)",
   "label_hips": "Hips (cm)",
   "label_thigh": "Thigh (cm)",
+  "label_arm": "Arm (cm)",
   "bodyshape_result_title": "Your Estimated Body Shape",
   "bodyshape_bodyfat": "Estimated Body Fat",
   "bodyshape_disclaimer": "This is just a rough visual estimate, not a medical measurement.",

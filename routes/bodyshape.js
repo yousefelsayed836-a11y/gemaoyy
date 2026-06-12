@@ -26,7 +26,7 @@ router.get('/body-shape', requireAuth, (req, res) => {
 });
 
 router.post('/body-shape', requireAuth, (req, res) => {
-  const { gender, height, weight, chest, waist, hips, thigh } = req.body;
+  const { gender, height, weight, chest, waist, hips, thigh, arm } = req.body;
 
   const data = {
     gender,
@@ -35,7 +35,8 @@ router.post('/body-shape', requireAuth, (req, res) => {
     chest: parseFloat(chest),
     waist: parseFloat(waist),
     hips: parseFloat(hips),
-    thigh: parseFloat(thigh)
+    thigh: parseFloat(thigh),
+    arm: parseFloat(arm)
   };
 
   if (!gender || Object.values(data).some(v => typeof v === 'number' && (!v || v <= 0))) {
@@ -45,10 +46,10 @@ router.post('/body-shape', requireAuth, (req, res) => {
   const bodyFat = estimateBodyFat(data);
 
   db.prepare(`
-    INSERT INTO body_shapes (user_id, gender, height, weight, chest, waist, hips, thigh, body_fat, updated_at)
-    VALUES (@user_id, @gender, @height, @weight, @chest, @waist, @hips, @thigh, @body_fat, CURRENT_TIMESTAMP)
+    INSERT INTO body_shapes (user_id, gender, height, weight, chest, waist, hips, thigh, arm, body_fat, updated_at)
+    VALUES (@user_id, @gender, @height, @weight, @chest, @waist, @hips, @thigh, @arm, @body_fat, CURRENT_TIMESTAMP)
     ON CONFLICT(user_id) DO UPDATE SET
-      gender=@gender, height=@height, weight=@weight, chest=@chest, waist=@waist, hips=@hips, thigh=@thigh,
+      gender=@gender, height=@height, weight=@weight, chest=@chest, waist=@waist, hips=@hips, thigh=@thigh, arm=@arm,
       body_fat=@body_fat, updated_at=CURRENT_TIMESTAMP
   `).run({ user_id: req.session.userId, body_fat: bodyFat, ...data });
 
