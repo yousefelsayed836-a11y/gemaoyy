@@ -29,9 +29,19 @@ h1, h2, h3, .logo, .btn {
   letter-spacing: 0.5px;
 }
 
-/* الإنجليزي بخط أكبر شوية، والعربي بخط Cairo */
+/* الإنجليزي بخط أكبر شوية وخفيف الوزن، والعربي بخط Cairo */
 html[dir="ltr"] body {
   font-size: 17.5px;
+}
+
+html[dir="ltr"] h1,
+html[dir="ltr"] h2,
+html[dir="ltr"] h3,
+html[dir="ltr"] .logo,
+html[dir="ltr"] .btn {
+  font-family: 'Oswald', 'Tahoma', 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 html[dir="rtl"] body {
