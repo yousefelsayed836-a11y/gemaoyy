@@ -5,7 +5,7 @@ const SKIN = [1, 200 / 255, 165 / 255];
 const FAT = [214 / 255, 48 / 255, 49 / 255];
 const UNDERWEAR = [0.55, 0.56, 0.6];
 const TWO_PI = Math.PI * 2;
-const SEGMENTS = 64;
+const SEGMENTS = 48;
 
 function lerpColor(c1, c2, t) {
   return [
@@ -34,15 +34,8 @@ function colorAt(y, stops) {
   return y < stops[0].y ? stops[0].color : stops[stops.length - 1].color;
 }
 
-// نعمل تنعيم لمنحنى الجسم بدل الخطوط المستقيمة بين النقاط، عشان يبقا الشكل أنسيابي وواقعي
-function smoothProfile(points, divisions = 6) {
-  const curve = new THREE.SplineCurve(points);
-  return curve.getPoints(Math.max(points.length * divisions, 32));
-}
-
 function latheWithGradient(points, stops, segments = SEGMENTS) {
-  const smooth = smoothProfile(points);
-  const geometry = new THREE.LatheGeometry(smooth, segments);
+  const geometry = new THREE.LatheGeometry(points, segments);
   const pos = geometry.attributes.position;
   const colors = new Float32Array(pos.count * 3);
   for (let i = 0; i < pos.count; i++) {
@@ -57,8 +50,7 @@ function latheWithGradient(points, stops, segments = SEGMENTS) {
 }
 
 function lathe(points, segments = SEGMENTS) {
-  const smooth = smoothProfile(points);
-  const geometry = new THREE.LatheGeometry(smooth, segments);
+  const geometry = new THREE.LatheGeometry(points, segments);
   geometry.computeVertexNormals();
   return geometry;
 }
@@ -96,9 +88,9 @@ function buildBody(data) {
 
   const torsoHeight = 52 * heightScale;
   const hipY = 0;
-  const hipBulgeY = torsoHeight * 0.08;
-  const bellyY = torsoHeight * 0.22;
-  const waistY = torsoHeight * 0.4;
+  const hipBulgeY = torsoHeight * 0.1;
+  const bellyY = torsoHeight * 0.25;
+  const waistY = torsoHeight * 0.42;
   const bustY = torsoHeight * 0.78;
   const shoulderY = torsoHeight;
   const neckBaseY = shoulderY + 2.5 * heightScale;
@@ -131,9 +123,7 @@ function buildBody(data) {
     new THREE.Vector2(Math.max(thighR * 0.55, 1), ankleY)
   ];
   const legGeo = lathe(legPoints);
-  const legMat = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color(...thighColor), roughness: 0.55, clearcoat: 0.05, clearcoatRoughness: 0.6
-  });
+  const legMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...thighColor), roughness: 0.6 });
 
   const leftLeg = shadowMesh(legGeo, legMat);
   leftLeg.position.set(-legCenterX, 0, 0);
@@ -165,16 +155,12 @@ function buildBody(data) {
     new THREE.Vector2(Math.max(shoulderR * 0.48, 0.5), neckY)
   ];
   const torsoGeo = latheWithGradient(torsoPoints, torsoStops);
-  const torsoMat = new THREE.MeshPhysicalMaterial({
-    vertexColors: true, roughness: 0.55, metalness: 0.02, clearcoat: 0.05, clearcoatRoughness: 0.6
-  });
+  const torsoMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, metalness: 0.05 });
   group.add(shadowMesh(torsoGeo, torsoMat));
 
   // الرأس
   const headGeo = new THREE.SphereGeometry(headR, 32, 32);
-  const skinMat = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color(...SKIN), roughness: 0.55, clearcoat: 0.05, clearcoatRoughness: 0.6
-  });
+  const skinMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...SKIN), roughness: 0.6 });
   const head = shadowMesh(headGeo, skinMat);
   head.position.y = headY;
   group.add(head);
@@ -196,7 +182,7 @@ function buildBody(data) {
     new THREE.Vector2(Math.max(armR * 0.85, 0.5), shoulderY - armLength * 0.9),
     new THREE.Vector2(Math.max(armR * 0.7, 0.5), wristY)
   ];
-  const armGeo = lathe(armPoints, 32);
+  const armGeo = lathe(armPoints, 24);
   const armOffsetX = shoulderR * 0.8 + Math.max(armR * 0.55, 1);
 
   const leftArm = shadowMesh(armGeo, skinMat);
@@ -226,12 +212,12 @@ function buildBody(data) {
   group.add(rightHand);
 
   // الملابس الداخلية فوق الحوض (شكل واقعي شبيه بصور المسح الجسدي) بتغطي اتصال الجذع بالرجلين
-  const wearTopY = waistY * 0.5;
-  const wearBottomY = -legLength * 0.1;
+  const wearTopY = waistY * 0.55;
+  const wearBottomY = -legLength * 0.08;
   const wearPoints = [
-    new THREE.Vector2(Math.max(legHalfSpan * 1.06, 0.6), wearBottomY),
-    new THREE.Vector2(Math.max(hipsFinal * 1.06, 0.6), hipBulgeY),
-    new THREE.Vector2(Math.max((hipsFinal + waistFinal) / 2 * 1.05, 0.6), wearTopY)
+    new THREE.Vector2(Math.max(legHalfSpan * 1.05, 0.6), wearBottomY),
+    new THREE.Vector2(Math.max(hipsFinal * 1.05, 0.6), hipBulgeY),
+    new THREE.Vector2(Math.max((hipsFinal + waistFinal) / 2 * 1.03, 0.6), wearTopY)
   ];
   const wearGeo = lathe(wearPoints);
   const wearMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(...UNDERWEAR), roughness: 0.85 });
@@ -256,25 +242,23 @@ function init() {
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
   container.appendChild(renderer.domElement);
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x2a1a14, 0.55));
-  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.6);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.3);
   keyLight.position.set(80, 120, 150);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(1024, 1024);
   scene.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.45);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
   fillLight.position.set(-100, 40, -80);
   scene.add(fillLight);
 
   // إضاءة خلفية خفيفة عشان تفرق الموديل عن الخلفية وتدي عمق
-  const rimLight = new THREE.DirectionalLight(0xaad4ff, 0.5);
+  const rimLight = new THREE.DirectionalLight(0xaad4ff, 0.4);
   rimLight.position.set(0, 60, -150);
   scene.add(rimLight);
 
@@ -298,7 +282,7 @@ function init() {
 
   // أرضية شفافة بتستقبل الظل فقط عشان تثبت الموديل بصريًا
   const groundGeo = new THREE.PlaneGeometry(maxDim * 4, maxDim * 4);
-  const groundMat = new THREE.ShadowMaterial({ opacity: 0.28 });
+  const groundMat = new THREE.ShadowMaterial({ opacity: 0.25 });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = box.min.y;
