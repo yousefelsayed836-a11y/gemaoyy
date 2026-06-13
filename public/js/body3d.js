@@ -2,6 +2,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
 import { OBJLoader } from '/vendor/three/examples/jsm/loaders/OBJLoader.js';
 import { FBXLoader } from '/vendor/three/examples/jsm/loaders/FBXLoader.js';
 import { OrbitControls } from '/vendor/three/examples/jsm/controls/OrbitControls.js';
+import { mergeVertices } from '/vendor/three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const SKIN = [0.97, 0.96, 0.94];
 const FAT = [214 / 255, 48 / 255, 49 / 255];
@@ -67,11 +68,66 @@ function flattenToWorld(root) {
   const group = new THREE.Group();
   root.traverse((c) => {
     if (!c.isMesh) return;
-    const geo = c.geometry.clone();
+    let geo = c.geometry.clone();
     geo.applyMatrix4(c.matrixWorld);
+    geo.deleteAttribute('normal');
+    geo.deleteAttribute('uv');
+    geo = mergeVertices(geo);
     group.add(new THREE.Mesh(geo));
   });
   return group;
+}
+
+// نعمل تنعيم (Laplacian) للسطح في منطقة الجذع عشان نشيل تفاصيل العضلات وتبان دهون مترهلة
+// بدل عضلات واضحة، بقوة بتزيد مع نسبة الدهون
+function smoothTorso(geo, yMin, range, bodyFat) {
+  const index = geo.index;
+  const pos = geo.attributes.position;
+  if (!index) return;
+
+  const fatFactor = Math.min(Math.max((bodyFat - 14) / 26, 0), 1);
+  if (fatFactor <= 0) return;
+
+  const n = pos.count;
+  const neighbors = Array.from({ length: n }, () => new Set());
+  const idx = index.array;
+  for (let i = 0; i < idx.length; i += 3) {
+    const a = idx[i], b = idx[i + 1], c = idx[i + 2];
+    neighbors[a].add(b); neighbors[a].add(c);
+    neighbors[b].add(a); neighbors[b].add(c);
+    neighbors[c].add(a); neighbors[c].add(b);
+  }
+
+  const weights = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const t = (pos.getY(i) - yMin) / range;
+    // منطقة الجذع (من تحت الصدر لفوق الحوض) هي اللي بتترهل لما الدهون تزيد
+    const band = smoothstep((t - 0.42) / 0.1) * (1 - smoothstep((t - 0.78) / 0.08));
+    weights[i] = fatFactor * band * 0.9;
+  }
+
+  let cur = Float32Array.from(pos.array);
+  const iterations = 15;
+  for (let iter = 0; iter < iterations; iter++) {
+    const next = Float32Array.from(cur);
+    for (let i = 0; i < n; i++) {
+      const w = weights[i];
+      const nbrs = neighbors[i];
+      if (w <= 0 || nbrs.size === 0) continue;
+      let sx = 0, sy = 0, sz = 0;
+      nbrs.forEach((j) => { sx += cur[j * 3]; sy += cur[j * 3 + 1]; sz += cur[j * 3 + 2]; });
+      const cnt = nbrs.size;
+      next[i * 3] = cur[i * 3] + (sx / cnt - cur[i * 3]) * w;
+      next[i * 3 + 1] = cur[i * 3 + 1] + (sy / cnt - cur[i * 3 + 1]) * w;
+      next[i * 3 + 2] = cur[i * 3 + 2] + (sz / cnt - cur[i * 3 + 2]) * w;
+    }
+    cur = next;
+  }
+
+  for (let i = 0; i < n; i++) {
+    pos.setXYZ(i, cur[i * 3], cur[i * 3 + 1], cur[i * 3 + 2]);
+  }
+  pos.needsUpdate = true;
 }
 
 // محور كل رجل لوحدها عند الكاحل، عشان لما نكبر/نصغر الرجل ميبعدوش عن بعض بشكل غريب
@@ -165,6 +221,7 @@ function deformAndColor(group, data) {
 
   group.children.forEach((mesh) => {
     const geo = mesh.geometry;
+    smoothTorso(geo, yMin, range, data.body_fat || 0);
     const pos = geo.attributes.position;
     const colors = new Float32Array(pos.count * 3);
     for (let i = 0; i < pos.count; i++) {
