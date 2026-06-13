@@ -74,22 +74,30 @@ function flattenToWorld(root) {
   return group;
 }
 
-function averageRadiusAtBand(group, yMin, range, cx, cz, tCenter, halfWidth) {
+// محور كل رجل لوحدها عند الكاحل، عشان لما نكبر/نصغر الرجل ميبعدوش عن بعض بشكل غريب
+function ankleCentroids(group, yMin, range, cx, cz, tCenter, halfWidth) {
   const y0 = yMin + (tCenter - halfWidth) * range;
   const y1 = yMin + (tCenter + halfWidth) * range;
-  let sum = 0, count = 0;
+  const sides = [{ x: 0, z: 0, count: 0 }, { x: 0, z: 0, count: 0 }];
   group.children.forEach((mesh) => {
     const pos = mesh.geometry.attributes.position;
     for (let i = 0; i < pos.count; i++) {
       const y = pos.getY(i);
       if (y >= y0 && y <= y1) {
         const x = pos.getX(i), z = pos.getZ(i);
-        sum += Math.hypot(x - cx, z - cz);
-        count++;
+        const side = x >= cx ? 1 : 0;
+        sides[side].x += x;
+        sides[side].z += z;
+        sides[side].count++;
       }
     }
   });
-  return count ? sum / count : 1;
+  return sides.map((s) => (s.count ? { x: s.x / s.count, z: s.z / s.count } : { x: cx, z: cz }));
+}
+
+function smoothstep(t) {
+  const c = Math.min(Math.max(t, 0), 1);
+  return c * c * (3 - 2 * c);
 }
 
 // تشكيل الجسم حسب القياسات: تكبير/تصغير شعاعي حول المحور الرأسي تبعًا للارتفاع
@@ -101,17 +109,28 @@ function deformAndColor(group, data) {
   const cz = (box.min.z + box.max.z) / 2;
   const range = Math.max(yMax - yMin, 0.001);
 
-  const heightScale = (data.height || 170) / range;
-  const userRadius = (measureCm) => (measureCm / TWO_PI) / heightScale;
+  const heightCm = data.height || 170;
+  const heightScale = heightCm / range;
 
-  const clampMult = (m) => Math.min(Math.max(m, 0.85), 1.2);
+  // نسب جسم متوسطة (محيط كنسبة من الطول) عشان نقيس عليها هل القياس ده "تخين" أو "رفيع"
+  const isFemale = data.gender === 'female';
+  const TYPICAL = isFemale
+    ? { chest: 0.56, waist: 0.46, hips: 0.58, thigh: 0.32, arm: 0.16 }
+    : { chest: 0.55, waist: 0.48, hips: 0.53, thigh: 0.30, arm: 0.17 };
 
-  const thighMult = clampMult(userRadius(data.thigh) / averageRadiusAtBand(group, yMin, range, cx, cz, 0.30, 0.05));
-  const hipsMult = clampMult(userRadius(data.hips) / averageRadiusAtBand(group, yMin, range, cx, cz, 0.45, 0.05));
-  const waistMult = clampMult(userRadius(data.waist) / averageRadiusAtBand(group, yMin, range, cx, cz, 0.55, 0.05));
-  const chestMult = clampMult(userRadius(data.chest) / averageRadiusAtBand(group, yMin, range, cx, cz, 0.72, 0.05));
-  const armMult = clampMult(userRadius(data.arm) / averageRadiusAtBand(group, yMin, range, cx, cz, 0.85, 0.05));
+  const clampMult = (m) => Math.min(Math.max(m, 0.6), 1.7);
+  const ratioMult = (measureCm, key) => clampMult(measureCm / (TYPICAL[key] * heightCm));
+
+  const thighMult = ratioMult(data.thigh, 'thigh');
+  const hipsMult = ratioMult(data.hips, 'hips');
+  const waistMult = ratioMult(data.waist, 'waist');
+  const chestMult = ratioMult(data.chest, 'chest');
+  const armMult = ratioMult(data.arm, 'arm');
   const armShoulderMult = clampMult((chestMult + armMult) / 2);
+
+  // محور كل رجل لوحده عند الكاحل (t صغير)، عشان التكبير في الفخد ميعمل شكل تنورة غريب
+  const legSplitT = 0.45;
+  const ankles = ankleCentroids(group, yMin, range, cx, cz, 0.06, 0.04);
 
   const sizeStops = [
     { t: 0.00, m: 1 },
@@ -152,8 +171,16 @@ function deformAndColor(group, data) {
       const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
       const t = (y - yMin) / range;
       const m = multiplierAt(t, sizeStops);
-      pos.setX(i, cx + (x - cx) * m);
-      pos.setZ(i, cz + (z - cz) * m);
+
+      let ox = cx, oz = cz;
+      if (t < legSplitT) {
+        const ankle = x >= cx ? ankles[1] : ankles[0];
+        const f = smoothstep(t / legSplitT);
+        ox = ankle.x + (cx - ankle.x) * f;
+        oz = ankle.z + (cz - ankle.z) * f;
+      }
+      pos.setX(i, ox + (x - ox) * m);
+      pos.setZ(i, oz + (z - oz) * m);
 
       const c = colorAt(t, colorStops);
       colors[i * 3] = c[0];
