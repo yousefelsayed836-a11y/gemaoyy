@@ -12,9 +12,16 @@
         <label for="food"><%= t('label_food') %></label>
         <select id="food" name="food" required>
           <option value=""><%= t('opt_choose_food') %></option>
-          <% foods.forEach(f => { %>
-            <option value="<%= f.id %>" <%= selected === f.id ? 'selected' : '' %>><%= lang === 'ar' ? f.name_ar : f.name_en %></option>
-          <% }) %>
+          <optgroup label="<%= t('foods_cat_egyptian') %>">
+            <% foods.filter(f => f.category !== 'market').forEach(f => { %>
+              <option value="<%= f.id %>" <%= selected === f.id ? 'selected' : '' %>><%= lang === 'ar' ? f.name_ar : f.name_en %></option>
+            <% }) %>
+          </optgroup>
+          <optgroup label="<%= t('foods_cat_market') %>">
+            <% foods.filter(f => f.category === 'market').forEach(f => { %>
+              <option value="<%= f.id %>" <%= selected === f.id ? 'selected' : '' %>><%= lang === 'ar' ? f.name_ar : f.name_en %></option>
+            <% }) %>
+          </optgroup>
         </select>
       </div>
 

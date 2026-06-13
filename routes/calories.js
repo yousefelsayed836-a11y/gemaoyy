@@ -13,9 +13,18 @@ const ACTIVITY_FACTORS = {
 };
 
 const GOAL_ADJUSTMENT = {
-  lose: -500,   // تنشيف / خسارة وزن
-  maintain: 0,  // ثبات الوزن
-  gain: 400     // زيادة وزن / تضخيم
+  lose: -500,    // تنشيف / خسارة وزن (عجز معتدل بعد فترة العجز القوي)
+  maintain: 0,   // ثبات الوزن
+  recomp: -250,  // إعادة تكوين الجسم: عجز خفيف + بروتين عالي عشان تخس دهون وتحافظ/تبني عضل
+  gain: 400      // زيادة وزن / تضخيم
+};
+
+// البروتين بالجرام لكل كيلو من وزن الجسم حسب الهدف
+const PROTEIN_PER_KG = {
+  lose: 2.2,     // عجز السعرات بيهدد العضل، فالبروتين أعلى
+  maintain: 1.8,
+  recomp: 2.4,   // أعلى نسبة بروتين عشان نحافظ على العضل ونبنيه مع عجز خفيف
+  gain: 2
 };
 
 function calculate({ gender, age, weight, height, activity, goal }) {
@@ -34,8 +43,9 @@ function calculate({ gender, age, weight, height, activity, goal }) {
   let targetCalories = tdee + adjustment;
   if (targetCalories < 1200) targetCalories = 1200; // حد أدنى آمن
 
-  // البروتين: 2 جرام لكل كيلو من وزن الجسم
-  const proteinG = weight * 2;
+  // البروتين حسب الهدف
+  const proteinPerKg = PROTEIN_PER_KG[goal] ?? 2;
+  const proteinG = weight * proteinPerKg;
   const proteinCal = proteinG * 4;
 
   // الدهون: 25% من السعرات المستهدفة
@@ -46,7 +56,7 @@ function calculate({ gender, age, weight, height, activity, goal }) {
   const carbsCal = Math.max(targetCalories - proteinCal - fatCal, 0);
   const carbsG = carbsCal / 4;
 
-  return {
+  const result = {
     bmr: Math.round(bmr),
     tdee: Math.round(tdee),
     targetCalories: Math.round(targetCalories),
@@ -54,11 +64,31 @@ function calculate({ gender, age, weight, height, activity, goal }) {
     carbsG: Math.round(carbsG),
     fatG: Math.round(fatG)
   };
+
+  // خطة التدريج: لو الهدف تنشيف، أول 2-3 أسابيع عجز قوي عشان نخس بسرعة
+  // وبعدها نرجع لعجز متوسط (targetCalories) قابل للاستمرار لفترة أطول
+  if (goal === 'lose') {
+    let phase1 = Math.round(tdee * 0.75);
+    if (phase1 < 1200) phase1 = 1200;
+    result.phase1Calories = phase1;
+    result.phase2Calories = result.targetCalories;
+  }
+
+  return result;
+}
+
+// نضيف خطة التدريج للهدف "تنشيف" بناءً على القيم المحفوظة
+function withPhases(profile) {
+  if (!profile) return profile;
+  if (profile.goal !== 'lose') return profile;
+  let phase1 = Math.round(profile.tdee * 0.75);
+  if (phase1 < 1200) phase1 = 1200;
+  return { ...profile, phase1_calories: phase1, phase2_calories: profile.target_calories };
 }
 
 router.get('/calories', requireAuth, (req, res) => {
   const profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(req.session.userId);
-  res.render('calories', { result: profile || null, error: null, old: profile || {} });
+  res.render('calories', { result: withPhases(profile) || null, error: null, old: profile || {} });
 });
 
 router.post('/calories', requireAuth, (req, res) => {
@@ -102,7 +132,7 @@ router.post('/calories', requireAuth, (req, res) => {
   });
 
   const profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(req.session.userId);
-  res.render('calories', { result: profile, error: null, old: req.body });
+  res.render('calories', { result: withPhases(profile), error: null, old: req.body });
 });
 
 module.exports = router;

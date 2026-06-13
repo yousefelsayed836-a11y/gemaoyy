@@ -10,6 +10,7 @@ const authRoutes = require('./routes/auth');
 const caloriesRoutes = require('./routes/calories');
 const foodsRoutes = require('./routes/foods');
 const bodyShapeRoutes = require('./routes/bodyshape');
+const exercisesRoutes = require('./routes/exercises');
 const db = require('./db/database');
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/', authRoutes);
 app.use('/', caloriesRoutes);
 app.use('/', foodsRoutes);
 app.use('/', bodyShapeRoutes);
+app.use('/', exercisesRoutes);
 
 app.get('/', (req, res) => {
   res.render('home');

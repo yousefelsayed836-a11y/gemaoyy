@@ -58,25 +58,25 @@
     <% if (result) { %>
       <div class="card calc-result bodyshape-result">
         <h2><%= t('bodyshape_result_title') %></h2>
-        <div id="body3d-canvas" class="body3d-canvas"></div>
-        <p class="subtitle small"><%= t('bodyshape_drag_hint') %></p>
-        <script>
-          window.BODY_DATA = {
-            gender: <%- JSON.stringify(result.gender) %>,
-            chest: <%= result.chest %>,
-            waist: <%= result.waist %>,
-            hips: <%= result.hips %>,
-            thigh: <%= result.thigh %>,
-            arm: <%= result.arm %>,
-            height: <%= result.height %>,
-            body_fat: <%= result.body_fat %>
-          };
-        </script>
-        <script type="module" src="/js/body3d.js"></script>
         <div class="result-row highlight">
           <span><%= t('bodyshape_bodyfat') %></span>
           <strong><%= result.body_fat %>%</strong>
         </div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-value"><%= result.lean_mass %> <%= t('unit_kg') %></span>
+            <span class="stat-label"><%= t('bodyshape_lean_mass') %></span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value"><%= result.fat_mass %> <%= t('unit_kg') %></span>
+            <span class="stat-label"><%= t('bodyshape_fat_mass') %></span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value"><%= result.protein_g %> <%= t('unit_g') %></span>
+            <span class="stat-label"><%= t('bodyshape_protein') %></span>
+          </div>
+        </div>
+        <p class="subtitle small"><%= t('bodyshape_protein_hint') %></p>
         <p class="subtitle small"><%= t('bodyshape_disclaimer') %></p>
       </div>
     <% } %>

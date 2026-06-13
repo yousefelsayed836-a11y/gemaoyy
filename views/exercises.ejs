@@ -1,0 +1,94 @@
+<section class="calc-section">
+  <h1><%= t('ex_title') %></h1>
+  <p class="subtitle"><%= t('ex_subtitle') %></p>
+
+  <h2 class="ex-section-title"><%= t('ex_splits_title') %></h2>
+  <p class="subtitle"><%= t('ex_splits_subtitle') %></p>
+
+  <div class="ex-grid">
+    <% splits.forEach(split => { %>
+      <details class="card ex-card">
+        <summary>
+          <strong><%= split.name_ar %></strong>
+          <span class="ex-name-en"><%= split.name_en %></span>
+        </summary>
+        <p class="subtitle small"><%= split.desc_ar %></p>
+        <ul class="ex-day-list">
+          <% split.days.forEach(day => { %>
+            <li>
+              <span class="ex-day-name"><%= day.day_ar %></span>
+              <% if (day.muscles_ar && day.muscles_ar.length) { %>
+                <span class="ex-day-muscles">
+                  <% day.muscles_ar.forEach(mid => { %>
+                    <span class="ex-badge"><%= muscleById[mid] ? muscleById[mid].name_ar : mid %></span>
+                  <% }) %>
+                </span>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      </details>
+    <% }) %>
+  </div>
+
+  <h2 class="ex-section-title"><%= t('ex_muscles_title') %></h2>
+  <p class="subtitle"><%= t('ex_muscles_subtitle') %></p>
+
+  <div class="ex-grid">
+    <% muscleGroups.forEach(m => { %>
+      <details class="card ex-card">
+        <summary>
+          <strong><%= m.name_ar %></strong>
+          <span class="ex-name-en"><%= m.name_en %></span>
+        </summary>
+        <p class="subtitle small ex-tip"><%= m.tip_ar %></p>
+        <ul class="ex-list">
+          <% m.exercises.forEach(ex => { %>
+            <li>
+              <div class="ex-row">
+                <span class="ex-ex-name"><%= ex.name_ar %> <span class="ex-name-en">(<%= ex.name_en %>)</span></span>
+                <span class="ex-tags">
+                  <span class="ex-badge ex-badge-<%= ex.equipment %>"><%= t('ex_equipment_' + ex.equipment) %></span>
+                  <span class="ex-badge ex-badge-<%= ex.best_for %>"><%= t('ex_best_for_' + ex.best_for) %></span>
+                </span>
+              </div>
+              <% if (ex.alternatives_ar && ex.alternatives_ar.length) { %>
+                <p class="ex-alt"><%= t('ex_alternatives') %>: <%= ex.alternatives_ar.join('، ') %></p>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      </details>
+    <% }) %>
+  </div>
+
+  <h2 class="ex-section-title"><%= t('ex_cardio_title') %></h2>
+  <p class="subtitle"><%= t('ex_cardio_subtitle') %></p>
+  <div class="card">
+    <ul class="ex-list">
+      <% cardio.forEach(c => { %>
+        <li>
+          <div class="ex-row">
+            <span class="ex-ex-name"><%= c.name_ar %> <span class="ex-name-en">(<%= c.name_en %>)</span></span>
+          </div>
+          <p class="ex-alt"><%= c.notes_ar %></p>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <h2 class="ex-section-title"><%= t('ex_home_title') %></h2>
+  <p class="subtitle"><%= t('ex_home_subtitle') %></p>
+  <div class="card">
+    <ul class="ex-list">
+      <% homeResistance.forEach(h => { %>
+        <li>
+          <div class="ex-row">
+            <span class="ex-ex-name"><%= h.name_ar %> <span class="ex-name-en">(<%= h.name_en %>)</span></span>
+            <span class="ex-tags"><span class="ex-badge"><%= h.muscle_ar %></span></span>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>

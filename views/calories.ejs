@@ -49,6 +49,7 @@
         <select id="goal" name="goal" required>
           <option value=""><%= t('opt_select') %></option>
           <option value="lose" <%= old.goal === 'lose' ? 'selected' : '' %>><%= t('opt_lose') %></option>
+          <option value="recomp" <%= old.goal === 'recomp' ? 'selected' : '' %>><%= t('opt_recomp') %></option>
           <option value="maintain" <%= old.goal === 'maintain' ? 'selected' : '' %>><%= t('opt_maintain') %></option>
           <option value="gain" <%= old.goal === 'gain' ? 'selected' : '' %>><%= t('opt_gain') %></option>
         </select>
@@ -72,6 +73,26 @@
           <span><%= t('result_target') %></span>
           <strong><%= result.target_calories %> <%= t('unit_cal_day') %></strong>
         </div>
+
+        <% if (result.goal === 'lose') { %>
+          <hr>
+          <h3><%= t('phase_title') %></h3>
+          <div class="result-row">
+            <span><%= t('phase1_label') %></span>
+            <strong><%= result.phase1_calories %> <%= t('unit_cal_day') %></strong>
+          </div>
+          <p class="subtitle small"><%= t('phase1_desc') %></p>
+          <div class="result-row">
+            <span><%= t('phase2_label') %></span>
+            <strong><%= result.phase2_calories %> <%= t('unit_cal_day') %></strong>
+          </div>
+          <p class="subtitle small"><%= t('phase2_desc') %></p>
+        <% } else if (result.goal === 'recomp') { %>
+          <hr>
+          <h3><%= t('phase_title') %></h3>
+          <p class="subtitle small"><%= t('recomp_desc') %></p>
+        <% } %>
+
         <hr>
         <h3><%= t('result_macros_title') %></h3>
         <div class="stats-grid">

@@ -11,9 +11,18 @@ function estimateBodyFat({ gender, height, waist }) {
   return Math.max(Math.round(bodyFat * 10) / 10, 0);
 }
 
+// نضيف للنتيجة كتلة العضلات وكتلة الدهون والبروتين المطلوب بناءً على كتلة العضلات
+function withDerived(row) {
+  if (!row) return row;
+  const leanMass = Math.round(row.weight * (1 - row.body_fat / 100) * 10) / 10;
+  const fatMass = Math.round((row.weight - leanMass) * 10) / 10;
+  const proteinG = Math.round(leanMass * 2.2);
+  return { ...row, lean_mass: leanMass, fat_mass: fatMass, protein_g: proteinG };
+}
+
 router.get('/body-shape', requireAuth, (req, res) => {
   const saved = db.prepare('SELECT * FROM body_shapes WHERE user_id = ?').get(req.session.userId);
-  res.render('bodyshape', { result: saved || null, error: null, old: saved || {} });
+  res.render('bodyshape', { result: withDerived(saved), error: null, old: saved || {} });
 });
 
 router.post('/body-shape', requireAuth, (req, res) => {
@@ -46,7 +55,7 @@ router.post('/body-shape', requireAuth, (req, res) => {
 
   const result = db.prepare('SELECT * FROM body_shapes WHERE user_id = ?').get(req.session.userId);
 
-  res.render('bodyshape', { result, error: null, old: req.body });
+  res.render('bodyshape', { result: withDerived(result), error: null, old: req.body });
 });
 
 module.exports = router;

@@ -80,6 +80,7 @@
   "opt_very_active": "Very intense activity (athlete / high physical effort)",
   "label_goal": "Goal",
   "opt_lose": "Lose weight (cutting)",
+  "opt_recomp": "Cut fat & build muscle (Recomposition)",
   "opt_maintain": "Maintain weight",
   "opt_gain": "Gain weight (bulking)",
   "btn_calculate": "Calculate",
@@ -92,11 +93,21 @@
   "unit_cal": "cal",
   "unit_cal_day": "cal / day",
   "unit_g": "g",
+  "unit_kg": "kg",
+
+  "phase_title": "Phased Calorie Plan",
+  "phase1_label": "First 2-3 weeks (strong deficit)",
+  "phase1_desc": "Start with these calories to lose weight fast and get an early visual boost, but don't stay on this for too long - it can affect your muscle and hormones.",
+  "phase2_label": "After that (moderate, sustainable deficit)",
+  "phase2_desc": "After the first 2-3 weeks, switch to these calories and stay on them until you reach your goal - a moderate deficit you can sustain without losing much muscle.",
+  "recomp_desc": "Here the goal is to lose fat while keeping (or slightly building) muscle at the same time. A small deficit with very high protein and consistent resistance training is the key.",
 
   "foods_title": "Food Calories 🍗",
   "foods_subtitle": "Choose a food and enter the amount in grams to know its calories, protein, carbs and fat.",
   "label_food": "Food",
   "opt_choose_food": "Choose a food",
+  "foods_cat_egyptian": "Egyptian & Home Food",
+  "foods_cat_market": "Market Products",
   "label_amount": "Amount (grams)",
   "result_per_grams": "Per {grams} grams",
   "result_calories": "Calories",
@@ -110,11 +121,38 @@
   "label_hips": "Hips (cm)",
   "label_thigh": "Thigh (cm)",
   "label_arm": "Arm (cm)",
-  "bodyshape_result_title": "Your Estimated Body Shape",
-  "bodyshape_drag_hint": "Drag to rotate the 3D model and view it from different angles.",
+  "bodyshape_result_title": "Your Body Composition Analysis",
   "bodyshape_bodyfat": "Estimated Body Fat",
-  "bodyshape_disclaimer": "This is just a rough visual estimate, not a medical measurement.",
+  "bodyshape_lean_mass": "Lean Body Mass",
+  "bodyshape_fat_mass": "Fat Mass",
+  "bodyshape_protein": "Suggested Daily Protein",
+  "bodyshape_protein_hint": "Protein is calculated as 2.2g per kg of lean body mass to maintain and build it.",
+  "bodyshape_disclaimer": "This is just a rough estimate, not a medical measurement.",
   "dash_bodyshape_title": "Body Shape Estimator",
   "dash_bodyshape_desc": "Enter your measurements to estimate your body fat percentage and preview your body shape.",
-  "dash_bodyshape_btn": "Go to Body Shape Estimator"
+  "dash_bodyshape_btn": "Go to Body Shape Estimator",
+
+  "nav_exercises": "Exercises",
+  "ex_title": "Exercises 💪",
+  "ex_subtitle": "Ready-made workout splits, and every major muscle group with its exercises and alternatives at the gym or home, plus tips for bulking and cutting. (Content currently in Arabic)",
+
+  "ex_splits_title": "Workout Splits",
+  "ex_splits_subtitle": "Choose the split that fits how many days a week you train.",
+
+  "ex_muscles_title": "Muscles & Exercises",
+  "ex_muscles_subtitle": "Each major muscle with its main exercises and alternatives, and whether it's better for bulking or cutting.",
+
+  "ex_cardio_title": "Cardio",
+  "ex_cardio_subtitle": "To burn calories and improve heart and lung fitness.",
+
+  "ex_home_title": "Home Resistance Training",
+  "ex_home_subtitle": "Bodyweight or simple-equipment exercises if you don't have a gym.",
+
+  "ex_equipment_gym": "Gym",
+  "ex_equipment_home": "Home",
+  "ex_equipment_both": "Gym/Home",
+  "ex_best_for_bulk": "Bulking",
+  "ex_best_for_cut": "Cutting",
+  "ex_best_for_both": "Bulk & Cut",
+  "ex_alternatives": "Alternatives"
 }

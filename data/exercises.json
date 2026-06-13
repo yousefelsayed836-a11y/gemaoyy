@@ -1,0 +1,209 @@
+{
+  "muscleGroups": [
+    {
+      "id": "chest",
+      "name_ar": "الصدر",
+      "name_en": "Chest",
+      "tip_ar": "للتضخيم: 3-4 سيتات من 6-10 تكرار بأوزان ثقيلة مع تركيز على الحركات المركبة (بنش/ضغط). للتنشيف: زود التكرارات لـ 12-15 وقلل وقت الراحة (45-60 ثانية) وادمج حركات العزل في النهاية.",
+      "exercises": [
+        { "name_ar": "بنش برس بار", "name_en": "Barbell Bench Press", "equipment": "gym", "alternatives_ar": ["بنش دمبل", "بنش مكينة سميث"], "best_for": "bulk" },
+        { "name_ar": "بنش دمبل مستوي", "name_en": "Flat Dumbbell Press", "equipment": "gym", "alternatives_ar": ["بنش بار", "ضغط بالأرض"], "best_for": "both" },
+        { "name_ar": "بنش انكلاين (عالي)", "name_en": "Incline Bench Press", "equipment": "gym", "alternatives_ar": ["انكلاين دمبل", "ضغط على كرسي مرفوع"], "best_for": "bulk" },
+        { "name_ar": "تفتيح دمبل (فلاي)", "name_en": "Dumbbell Flyes", "equipment": "gym", "alternatives_ar": ["كروس كيبل", "بيك دواير مكينة"], "best_for": "cut" },
+        { "name_ar": "كروس أوفر كيبل", "name_en": "Cable Crossover", "equipment": "gym", "alternatives_ar": ["تفتيح دمبل", "مكينة بيك دواير"], "best_for": "cut" },
+        { "name_ar": "ضغط (Push-up)", "name_en": "Push-up", "equipment": "home", "alternatives_ar": ["ضغط بالتصفيق", "ضغط على الركب للمبتدئين"], "best_for": "both" },
+        { "name_ar": "ضغط ضيق (Diamond Push-up)", "name_en": "Diamond Push-up", "equipment": "home", "alternatives_ar": ["ضغط عادي", "ضغط مرفوع الرجلين"], "best_for": "cut" }
+      ]
+    },
+    {
+      "id": "back",
+      "name_ar": "الظهر",
+      "name_en": "Back",
+      "tip_ar": "للتضخيم: ركز على السحب الثقيل (ديدليفت/بار فري) بـ5-8 تكرار. للتنشيف: زود حركات السحب العالي (لات بل داون/سيتد رو) بتكرارات 12-15 مع شد العضلة جيدًا.",
+      "exercises": [
+        { "name_ar": "عقلة (بار فري)", "name_en": "Pull-up", "equipment": "both", "alternatives_ar": ["لات بل داون", "عقلة بمساعدة باند"], "best_for": "bulk" },
+        { "name_ar": "لات بل داون", "name_en": "Lat Pulldown", "equipment": "gym", "alternatives_ar": ["عقلة", "تجديف باند"], "best_for": "both" },
+        { "name_ar": "ديدليفت", "name_en": "Deadlift", "equipment": "gym", "alternatives_ar": ["رومانيان ديدليفت", "هايبر إكستنشن"], "best_for": "bulk" },
+        { "name_ar": "تجديف بار (بنت أوفر رو)", "name_en": "Barbell Bent-over Row", "equipment": "gym", "alternatives_ar": ["تجديف دمبل", "تجديف مكينة تي بار"], "best_for": "both" },
+        { "name_ar": "سيتد كيبل رو", "name_en": "Seated Cable Row", "equipment": "gym", "alternatives_ar": ["تجديف باند مطاطي", "تجديف دمبل"], "best_for": "cut" },
+        { "name_ar": "تجديف بالباند المطاطي", "name_en": "Resistance Band Row", "equipment": "home", "alternatives_ar": ["تجديف بشكاير مياه", "سوبرمان"], "best_for": "both" },
+        { "name_ar": "سوبرمان (Superman)", "name_en": "Superman Hold", "equipment": "home", "alternatives_ar": ["هايبر إكستنشن أرضي"], "best_for": "cut" }
+      ]
+    },
+    {
+      "id": "shoulders",
+      "name_ar": "الأكتاف",
+      "name_en": "Shoulders",
+      "tip_ar": "للتضخيم: ابدأ بالضغط العسكري الثقيل 6-10 تكرار. للتنشيف: ركز على الرفرفة الجانبية والخلفية بتكرارات عالية (15-20) لإبراز شكل الكتف.",
+      "exercises": [
+        { "name_ar": "ضغط عسكري بار", "name_en": "Military Press (Barbell)", "equipment": "gym", "alternatives_ar": ["ضغط دمبل واقف", "ضغط مكينة شولدر"], "best_for": "bulk" },
+        { "name_ar": "ضغط دمبل جالس", "name_en": "Seated Dumbbell Press", "equipment": "gym", "alternatives_ar": ["ضغط عسكري بار", "ضغط مكينة"], "best_for": "both" },
+        { "name_ar": "رفرفة جانبية دمبل", "name_en": "Lateral Raise", "equipment": "gym", "alternatives_ar": ["رفرفة كيبل", "رفرفة بالباند"], "best_for": "cut" },
+        { "name_ar": "رفرفة خلفية (ريفرس فلاي)", "name_en": "Reverse Flyes", "equipment": "gym", "alternatives_ar": ["فيس بُل", "رفرفة خلفية بالباند"], "best_for": "cut" },
+        { "name_ar": "فيس بُل", "name_en": "Face Pull", "equipment": "gym", "alternatives_ar": ["رفرفة خلفية دمبل", "تجديف باند مرتفع"], "best_for": "both" },
+        { "name_ar": "ضغط عسكري بالباند/شكاير مياه", "name_en": "Band/Water-jug Shoulder Press", "equipment": "home", "alternatives_ar": ["ضغط حائط مائل (Pike push-up)"], "best_for": "both" },
+        { "name_ar": "Pike Push-up", "name_en": "Pike Push-up", "equipment": "home", "alternatives_ar": ["ضغط عسكري بالباند"], "best_for": "bulk" }
+      ]
+    },
+    {
+      "id": "biceps",
+      "name_ar": "البايسبس",
+      "name_en": "Biceps",
+      "tip_ar": "للتضخيم: بار كيرل ثقيل بـ6-10 تكرار مع نزول بطيء. للتنشيف: سوبرسيت بين تمرينين (بار كيرل + هامر كيرل) بتكرارات 12-15 وراحة قصيرة.",
+      "exercises": [
+        { "name_ar": "بار كيرل (باربيل)", "name_en": "Barbell Curl", "equipment": "gym", "alternatives_ar": ["دمبل كيرل", "كيرل بالباند"], "best_for": "bulk" },
+        { "name_ar": "دمبل كيرل بالتبادل", "name_en": "Alternating Dumbbell Curl", "equipment": "gym", "alternatives_ar": ["بار كيرل", "كيرل بالباند"], "best_for": "both" },
+        { "name_ar": "هامر كيرل", "name_en": "Hammer Curl", "equipment": "gym", "alternatives_ar": ["كيرل حبل كيبل", "هامر كيرل بالباند"], "best_for": "both" },
+        { "name_ar": "كيرل مكينة كيبل", "name_en": "Cable Curl", "equipment": "gym", "alternatives_ar": ["بار كيرل", "كيرل بالباند"], "best_for": "cut" },
+        { "name_ar": "كيرل بالباند المطاطي", "name_en": "Resistance Band Curl", "equipment": "home", "alternatives_ar": ["كيرل بشكاير مياه"], "best_for": "both" }
+      ]
+    },
+    {
+      "id": "triceps",
+      "name_ar": "الترايسبس",
+      "name_en": "Triceps",
+      "tip_ar": "للتضخيم: ديبس وكلوز جريب بنش بأوزان ثقيلة 6-10 تكرار. للتنشيف: بريس داون وكيك باك بتكرارات عالية (15+) لشد العضلة.",
+      "exercises": [
+        { "name_ar": "ديبس (متوازي)", "name_en": "Dips", "equipment": "both", "alternatives_ar": ["ديبس على كرسي/بنش", "كلوز جريب بنش"], "best_for": "bulk" },
+        { "name_ar": "كلوز جريب بنش برس", "name_en": "Close-Grip Bench Press", "equipment": "gym", "alternatives_ar": ["ديبس", "ضغط ضيق (Diamond Push-up)"], "best_for": "bulk" },
+        { "name_ar": "بريس داون كيبل", "name_en": "Cable Pushdown", "equipment": "gym", "alternatives_ar": ["بريس داون بالباند", "كيك باك دمبل"], "best_for": "cut" },
+        { "name_ar": "تمرين الجمجمة (Skull Crusher)", "name_en": "Skull Crusher", "equipment": "gym", "alternatives_ar": ["بريس داون كيبل"], "best_for": "both" },
+        { "name_ar": "ديبس على كرسي بالبيت", "name_en": "Chair Dips", "equipment": "home", "alternatives_ar": ["ضغط ضيق (Diamond Push-up)", "بريس داون بالباند"], "best_for": "both" }
+      ]
+    },
+    {
+      "id": "quads",
+      "name_ar": "مقدمة الفخد (كوادز)",
+      "name_en": "Quads",
+      "tip_ar": "للتضخيم: سكوات وليج بريس ثقيل 6-10 تكرار. للتنشيف: زود ليج إكستنشن ومشايات لانج بتكرارات 15-20 مع راحة قصيرة لزيادة الحرق.",
+      "exercises": [
+        { "name_ar": "سكوات بار (باك سكوات)", "name_en": "Barbell Back Squat", "equipment": "gym", "alternatives_ar": ["سكوات جوبلت دمبل", "ليج بريس"], "best_for": "bulk" },
+        { "name_ar": "ليج بريس", "name_en": "Leg Press", "equipment": "gym", "alternatives_ar": ["سكوات بار", "سكوات بالبيت"], "best_for": "both" },
+        { "name_ar": "ليج إكستنشن", "name_en": "Leg Extension", "equipment": "gym", "alternatives_ar": ["سكوات بمقعدة عالية"], "best_for": "cut" },
+        { "name_ar": "مشاية لانج (Lunges)", "name_en": "Lunges", "equipment": "both", "alternatives_ar": ["سبليت سكوات بلغاري", "سكوات عادي"], "best_for": "both" },
+        { "name_ar": "سكوات بالبيت (وزن الجسم)", "name_en": "Bodyweight Squat", "equipment": "home", "alternatives_ar": ["سكوات جامبينج", "مشاية لانج"], "best_for": "both" },
+        { "name_ar": "سكوات جامبينج (Jump Squat)", "name_en": "Jump Squat", "equipment": "home", "alternatives_ar": ["سكوات بالبيت"], "best_for": "cut" }
+      ]
+    },
+    {
+      "id": "hamstrings_glutes",
+      "name_ar": "خلفية الفخد والمؤخرة",
+      "name_en": "Hamstrings & Glutes",
+      "tip_ar": "للتضخيم: رومانيان ديدليفت وهيب ثرست بأوزان ثقيلة 6-10 تكرار. للتنشيف: ليج كيرل وجلوت بريدج بتكرارات عالية مع تثبيت قمة الحركة لشد المؤخرة.",
+      "exercises": [
+        { "name_ar": "رومانيان ديدليفت", "name_en": "Romanian Deadlift", "equipment": "gym", "alternatives_ar": ["ديدليفت عادي", "هيب ثرست"], "best_for": "bulk" },
+        { "name_ar": "هيب ثرست", "name_en": "Hip Thrust", "equipment": "gym", "alternatives_ar": ["جلوت بريدج بالبيت", "رومانيان ديدليفت"], "best_for": "both" },
+        { "name_ar": "ليج كيرل (مكينة)", "name_en": "Leg Curl Machine", "equipment": "gym", "alternatives_ar": ["نورديك كيرل", "جلوت بريدج"], "best_for": "cut" },
+        { "name_ar": "جلوت بريدج بالبيت", "name_en": "Glute Bridge", "equipment": "home", "alternatives_ar": ["دونكي كيك", "هيب ثرست بوزن الجسم"], "best_for": "both" },
+        { "name_ar": "دونكي كيك (Donkey Kick)", "name_en": "Donkey Kick", "equipment": "home", "alternatives_ar": ["جلوت بريدج"], "best_for": "cut" }
+      ]
+    },
+    {
+      "id": "calves",
+      "name_ar": "السمانة",
+      "name_en": "Calves",
+      "tip_ar": "العضلة دي بتستجيب أحسن مع تكرارات عالية (15-25) في الحالتين، الفرق بس في عدد السيتات والراحة - تضخيم: راحة أطول وأوزان أعلى. تنشيف: راحة قصيرة وتكرار أعلى.",
+      "exercises": [
+        { "name_ar": "رفرفة سمانة واقف (مكينة)", "name_en": "Standing Calf Raise", "equipment": "gym", "alternatives_ar": ["رفرفة سمانة بالبيت على درجة"], "best_for": "both" },
+        { "name_ar": "رفرفة سمانة جالس", "name_en": "Seated Calf Raise", "equipment": "gym", "alternatives_ar": ["رفرفة واقف"], "best_for": "both" },
+        { "name_ar": "رفرفة سمانة بالبيت على درجة", "name_en": "Step Calf Raise", "equipment": "home", "alternatives_ar": ["رفرفة سمانة بدمبل/شكاير مياه"], "best_for": "both" }
+      ]
+    },
+    {
+      "id": "abs",
+      "name_ar": "البطن",
+      "name_en": "Abs / Core",
+      "tip_ar": "البطن بتتشكل بالأكل (نسبة الدهون منخفضة) مش بالتمرين فقط، بس تقويتها مهم. اعمل 3-4 تمارين متنوعة (سفلي/علوي/جانبي) بتكرارات 15-20 أو تثبيت زمني 30-60 ثانية.",
+      "exercises": [
+        { "name_ar": "كرنش (Crunch)", "name_en": "Crunch", "equipment": "home", "alternatives_ar": ["كرنش مكينة كيبل"], "best_for": "both" },
+        { "name_ar": "بلانك (Plank)", "name_en": "Plank", "equipment": "home", "alternatives_ar": ["بلانك جانبي"], "best_for": "both" },
+        { "name_ar": "رفع رجلين معلق (Hanging Leg Raise)", "name_en": "Hanging Leg Raise", "equipment": "gym", "alternatives_ar": ["رفع رجلين على الأرض"], "best_for": "both" },
+        { "name_ar": "رفع رجلين على الأرض (Lying Leg Raise)", "name_en": "Lying Leg Raise", "equipment": "home", "alternatives_ar": ["رفع رجلين معلق"], "best_for": "both" },
+        { "name_ar": "راشن تويست (Russian Twist)", "name_en": "Russian Twist", "equipment": "home", "alternatives_ar": ["بلانك جانبي"], "best_for": "cut" },
+        { "name_ar": "بلانك جانبي (Side Plank)", "name_en": "Side Plank", "equipment": "home", "alternatives_ar": ["راشن تويست"], "best_for": "both" }
+      ]
+    }
+  ],
+
+  "cardio": [
+    { "name_ar": "جري (Running)", "name_en": "Running", "notes_ar": "ممتاز لحرق السعرات وتحسين القلب. للتنشيف: 20-30 دقيقة بمعدل متوسط 3-4 مرات أسبوعيًا." },
+    { "name_ar": "حبل النَّط (Jump Rope)", "name_en": "Jump Rope", "notes_ar": "حرق سعرات عالي في وقت قصير ومناسب جدًا للبيت، ابدأ بـ3 جولات من 1-3 دقائق." },
+    { "name_ar": "عجلة (Cycling)", "name_en": "Cycling", "notes_ar": "تأثير منخفض على المفاصل، مناسب لو عندك مشكلة في الركبة، 20-40 دقيقة." },
+    { "name_ar": "ستير ماستر / درج", "name_en": "Stairmaster / Stairs", "notes_ar": "حرق سعرات قوي ويشغل عضلات الأرجل والمؤخرة، 15-20 دقيقة." },
+    { "name_ar": "HIIT (تدريب متقطع عالي الشدة)", "name_en": "HIIT", "notes_ar": "أسرع طريقة لحرق الدهون، مثال: 30 ثانية شدة عالية + 30-60 ثانية راحة، كرر 8-10 مرات." },
+    { "name_ar": "مشي بميل (Incline Walking)", "name_en": "Incline Walking", "notes_ar": "خفيف على الجسم ومناسب يوميًا حتى في فترة العجز القوي، 30-45 دقيقة." }
+  ],
+
+  "homeResistance": [
+    { "name_ar": "ضغط (Push-up) وتنويعاته", "name_en": "Push-up Variations", "muscle_ar": "الصدر/الترايسبس" },
+    { "name_ar": "عقلة (لو فيه بار)", "name_en": "Pull-up", "muscle_ar": "الظهر/البايسبس" },
+    { "name_ar": "سكوات ولانج بوزن الجسم", "name_en": "Bodyweight Squat & Lunges", "muscle_ar": "الأرجل" },
+    { "name_ar": "جلوت بريدج ودونكي كيك", "name_en": "Glute Bridge & Donkey Kick", "muscle_ar": "المؤخرة" },
+    { "name_ar": "بلانك وكرنش وراشن تويست", "name_en": "Plank, Crunch & Russian Twist", "muscle_ar": "البطن" },
+    { "name_ar": "تمارين بالباند المطاطي (كيرل/تجديف/ضغط)", "name_en": "Resistance Band Exercises", "muscle_ar": "كل العضلات" },
+    { "name_ar": "تمارين بشكاير مياه/رمل بدل الدمبل", "name_en": "Water-jug / Sandbag Exercises", "muscle_ar": "كل العضلات" }
+  ],
+
+  "splits": [
+    {
+      "id": "ppl",
+      "name_ar": "جدول بوش بول ليج (PPL)",
+      "name_en": "Push / Pull / Legs",
+      "desc_ar": "مناسب لـ6 أيام تمرين أسبوعيًا (يمكن تطبيقه على 3 أيام بتكرار الدورة مرتين). كل عضلة بتتمرن مرتين أسبوعيًا.",
+      "days": [
+        { "day_ar": "اليوم 1: بوش (Push)", "muscles_ar": ["chest", "shoulders", "triceps"] },
+        { "day_ar": "اليوم 2: بول (Pull)", "muscles_ar": ["back", "biceps"] },
+        { "day_ar": "اليوم 3: ليج (Legs)", "muscles_ar": ["quads", "hamstrings_glutes", "calves", "abs"] },
+        { "day_ar": "اليوم 4: بوش (Push)", "muscles_ar": ["chest", "shoulders", "triceps"] },
+        { "day_ar": "اليوم 5: بول (Pull)", "muscles_ar": ["back", "biceps"] },
+        { "day_ar": "اليوم 6: ليج (Legs)", "muscles_ar": ["quads", "hamstrings_glutes", "calves", "abs"] },
+        { "day_ar": "اليوم 7: راحة", "muscles_ar": [] }
+      ]
+    },
+    {
+      "id": "arnold",
+      "name_ar": "جدول أرنولد سبليت",
+      "name_en": "Arnold Split",
+      "desc_ar": "جدول 6 أيام مشهور (طريقة أرنولد شوارزنيجر)، بيجمع عضلتين متضادتين أو متقاربتين في نفس اليوم بحجم تمرين عالي.",
+      "days": [
+        { "day_ar": "اليوم 1: صدر وظهر", "muscles_ar": ["chest", "back"] },
+        { "day_ar": "اليوم 2: أكتاف وأذرع (بايسبس وترايسبس)", "muscles_ar": ["shoulders", "biceps", "triceps"] },
+        { "day_ar": "اليوم 3: أرجل وبطن", "muscles_ar": ["quads", "hamstrings_glutes", "calves", "abs"] },
+        { "day_ar": "اليوم 4: صدر وظهر", "muscles_ar": ["chest", "back"] },
+        { "day_ar": "اليوم 5: أكتاف وأذرع (بايسبس وترايسبس)", "muscles_ar": ["shoulders", "biceps", "triceps"] },
+        { "day_ar": "اليوم 6: أرجل وبطن", "muscles_ar": ["quads", "hamstrings_glutes", "calves", "abs"] },
+        { "day_ar": "اليوم 7: راحة", "muscles_ar": [] }
+      ]
+    },
+    {
+      "id": "upper_lower",
+      "name_ar": "جدول أبر/لور (Upper/Lower)",
+      "name_en": "Upper / Lower Split",
+      "desc_ar": "مناسب لـ4 أيام أسبوعيًا، توازن جيد بين الحجم والراحة، ومرن لو عندك وقت محدود.",
+      "days": [
+        { "day_ar": "اليوم 1: الجزء العلوي (Upper)", "muscles_ar": ["chest", "back", "shoulders", "biceps", "triceps"] },
+        { "day_ar": "اليوم 2: الجزء السفلي (Lower)", "muscles_ar": ["quads", "hamstrings_glutes", "calves", "abs"] },
+        { "day_ar": "اليوم 3: راحة أو كارديو خفيف", "muscles_ar": [] },
+        { "day_ar": "اليوم 4: الجزء العلوي (Upper)", "muscles_ar": ["chest", "back", "shoulders", "biceps", "triceps"] },
+        { "day_ar": "اليوم 5: الجزء السفلي (Lower)", "muscles_ar": ["quads", "hamstrings_glutes", "calves", "abs"] },
+        { "day_ar": "اليوم 6: راحة أو كارديو خفيف", "muscles_ar": [] },
+        { "day_ar": "اليوم 7: راحة", "muscles_ar": [] }
+      ]
+    },
+    {
+      "id": "full_body",
+      "name_ar": "جدول فول بودي (Full Body)",
+      "name_en": "Full Body",
+      "desc_ar": "مناسب جدًا للمبتدئين أو لو تقدر تتمرن 3 أيام بس أسبوعيًا - كل جسمك بيتمرن في كل حصة بحجم متوسط.",
+      "days": [
+        { "day_ar": "اليوم 1: فل بودي", "muscles_ar": ["quads", "chest", "back", "shoulders", "abs"] },
+        { "day_ar": "اليوم 2: راحة", "muscles_ar": [] },
+        { "day_ar": "اليوم 3: فل بودي", "muscles_ar": ["hamstrings_glutes", "back", "chest", "biceps", "triceps"] },
+        { "day_ar": "اليوم 4: راحة", "muscles_ar": [] },
+        { "day_ar": "اليوم 5: فل بودي", "muscles_ar": ["quads", "shoulders", "back", "chest", "abs", "calves"] },
+        { "day_ar": "اليوم 6: راحة", "muscles_ar": [] },
+        { "day_ar": "اليوم 7: راحة", "muscles_ar": [] }
+      ]
+    }
+  ]
+}
