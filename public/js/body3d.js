@@ -80,7 +80,7 @@ function flattenToWorld(root) {
 
 // نعمل تنعيم (Laplacian) للسطح في منطقة الجذع عشان نشيل تفاصيل العضلات وتبان دهون مترهلة
 // بدل عضلات واضحة، بقوة بتزيد مع نسبة الدهون
-function smoothTorso(geo, yMin, range, bodyFat) {
+function smoothTorso(geo, yMin, range, cx, cz, torsoRadius, bodyFat) {
   const index = geo.index;
   const pos = geo.attributes.position;
   if (!index) return;
@@ -103,7 +103,10 @@ function smoothTorso(geo, yMin, range, bodyFat) {
     const t = (pos.getY(i) - yMin) / range;
     // منطقة الجذع (من تحت الصدر لفوق الحوض) هي اللي بتترهل لما الدهون تزيد
     const band = smoothstep((t - 0.42) / 0.1) * (1 - smoothstep((t - 0.78) / 0.08));
-    weights[i] = fatFactor * band * 0.9;
+    // نمنع التنعيم عن الإيدين/الأكتاف البعيدة عن محور الجذع (تمنع شد الإيدين)
+    const dist = Math.hypot(pos.getX(i) - cx, pos.getZ(i) - cz);
+    const radialGate = 1 - smoothstep((dist / torsoRadius - 1.1) / 0.5);
+    weights[i] = fatFactor * band * radialGate * 0.9;
   }
 
   let cur = Float32Array.from(pos.array);
@@ -188,6 +191,15 @@ function deformAndColor(group, data) {
   const legSplitT = 0.45;
   const ankles = ankleCentroids(group, yMin, range, cx, cz, 0.06, 0.04);
 
+  // الكرش: نكبر منطقة البطن شعاعيًا زيادة عن باقي الجذع، بقوة بتزيد مع نسبة الدهون
+  const bellyFatFactor = Math.min(Math.max(((data.body_fat || 0) - 14) / 26, 0), 1);
+  const bellyBand = (t) => smoothstep((t - 0.38) / 0.08) * (1 - smoothstep((t - 0.62) / 0.1));
+
+  // نصف قطر الجذع التقريبي محسوب من قياس الخصر نفسه (محيط = 2π × نصف القطر)
+  // عشان نطبق الكرش بس على الجذع ومنوصلش لإيدين/أكتاف بعيدة عن المحور (تمنع شكل "المخالب")
+  const torsoRadius = (data.waist / TWO_PI) * (range / heightCm);
+  const bellyGate = (dist) => 1 - smoothstep((dist / torsoRadius - 1.1) / 0.5);
+
   const sizeStops = [
     { t: 0.00, m: 1 },
     { t: 0.10, m: 1 },
@@ -221,7 +233,7 @@ function deformAndColor(group, data) {
 
   group.children.forEach((mesh) => {
     const geo = mesh.geometry;
-    smoothTorso(geo, yMin, range, data.body_fat || 0);
+    smoothTorso(geo, yMin, range, cx, cz, torsoRadius, data.body_fat || 0);
     const pos = geo.attributes.position;
     const colors = new Float32Array(pos.count * 3);
     for (let i = 0; i < pos.count; i++) {
@@ -236,8 +248,12 @@ function deformAndColor(group, data) {
         ox = ankle.x + (cx - ankle.x) * f;
         oz = ankle.z + (cz - ankle.z) * f;
       }
-      pos.setX(i, ox + (x - ox) * m);
-      pos.setZ(i, oz + (z - oz) * m);
+      const dist = Math.hypot(x - ox, z - oz);
+      const belly = bellyFatFactor * bellyBand(t) * bellyGate(dist) * 0.6;
+      const mBelly = m + belly;
+      pos.setX(i, ox + (x - ox) * mBelly);
+      pos.setZ(i, oz + (z - oz) * mBelly);
+      pos.setY(i, y - belly * range * 0.02);
 
       const c = colorAt(t, colorStops);
       colors[i * 3] = c[0];
