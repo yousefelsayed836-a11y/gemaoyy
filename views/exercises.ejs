@@ -75,21 +75,22 @@
     import { initMuscleViewer } from '/js/muscle-viewer.js';
 
     const hotspots = [
-      { muscle: 'chest', pos: [0, 0.046, 0.020] },
-      { muscle: 'back', pos: [0, 0.046, -0.020] },
-      { muscle: 'shoulders', pos: [-0.034, 0.061, 0.010] },
-      { muscle: 'shoulders', pos: [0.034, 0.061, 0.010] },
-      { muscle: 'biceps', pos: [-0.052, 0.040, 0.015] },
-      { muscle: 'biceps', pos: [0.052, 0.040, 0.015] },
-      { muscle: 'triceps', pos: [-0.052, 0.040, -0.015] },
-      { muscle: 'triceps', pos: [0.052, 0.040, -0.015] },
-      { muscle: 'abs', pos: [0, 0.018, 0.019] },
-      { muscle: 'quads', pos: [-0.020, -0.010, 0.018] },
-      { muscle: 'quads', pos: [0.020, -0.010, 0.018] },
-      { muscle: 'hamstrings_glutes', pos: [-0.022, 0.008, -0.020] },
-      { muscle: 'hamstrings_glutes', pos: [0.022, 0.008, -0.020] },
-      { muscle: 'calves', pos: [-0.020, -0.052, -0.016] },
-      { muscle: 'calves', pos: [0.020, -0.052, -0.016] },
+      { muscle: 'chest', pos: [-0.022, 0.046, 0.020], size: 0.038 },
+      { muscle: 'chest', pos: [0.022, 0.046, 0.020], size: 0.038 },
+      { muscle: 'back', pos: [0, 0.046, -0.020], size: 0.05 },
+      { muscle: 'shoulders', pos: [-0.034, 0.061, 0.010], size: 0.024 },
+      { muscle: 'shoulders', pos: [0.034, 0.061, 0.010], size: 0.024 },
+      { muscle: 'biceps', pos: [-0.052, 0.040, 0.015], size: 0.022 },
+      { muscle: 'biceps', pos: [0.052, 0.040, 0.015], size: 0.022 },
+      { muscle: 'triceps', pos: [-0.052, 0.040, -0.015], size: 0.022 },
+      { muscle: 'triceps', pos: [0.052, 0.040, -0.015], size: 0.022 },
+      { muscle: 'abs', pos: [0, 0.018, 0.019], size: 0.038 },
+      { muscle: 'quads', pos: [-0.020, -0.010, 0.018], size: 0.032 },
+      { muscle: 'quads', pos: [0.020, -0.010, 0.018], size: 0.032 },
+      { muscle: 'hamstrings_glutes', pos: [-0.022, 0.008, -0.020], size: 0.036 },
+      { muscle: 'hamstrings_glutes', pos: [0.022, 0.008, -0.020], size: 0.036 },
+      { muscle: 'calves', pos: [-0.020, -0.052, -0.016], size: 0.026 },
+      { muscle: 'calves', pos: [0.020, -0.052, -0.016], size: 0.026 },
     ];
 
     const viewerEl = document.getElementById('muscle-viewer');

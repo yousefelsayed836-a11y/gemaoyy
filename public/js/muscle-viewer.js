@@ -2,7 +2,6 @@ import * as THREE from '/vendor/three/build/three.module.min.js';
 import { OrbitControls } from '/vendor/three/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/vendor/three/jsm/loaders/GLTFLoader.js';
 
-const COLOR_DEFAULT = 0xffc107;
 const COLOR_ACTIVE = 0xff5722;
 
 function makeGlowTexture() {
@@ -86,16 +85,18 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
     const sprite = new THREE.Sprite(
       new THREE.SpriteMaterial({
         map: glowTexture,
-        color: COLOR_DEFAULT,
+        color: COLOR_ACTIVE,
         transparent: true,
+        opacity: 0,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       })
     );
     sprite.position.set(h.pos[0], h.pos[1], h.pos[2]);
-    sprite.scale.setScalar(0.014);
+    const baseScale = h.size || 0.014;
+    sprite.scale.setScalar(baseScale);
     sprite.userData.muscle = h.muscle;
-    sprite.userData.baseScale = 0.014;
+    sprite.userData.baseScale = baseScale;
     sprite.userData.active = false;
     group.add(sprite);
     hotspotMeshes.push(sprite);
@@ -167,9 +168,10 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
     const t = now / 1000;
 
     hotspotMeshes.forEach((s) => {
-      const pulse = 1 + Math.sin(t * 3 + s.position.x * 50) * 0.15;
-      const activeBoost = s.userData.active ? 1.7 : 1;
-      s.scale.setScalar(s.userData.baseScale * pulse * activeBoost);
+      if (!s.userData.active) return;
+      const pulse = 1 + Math.sin(t * 2.5 + s.position.x * 50) * 0.1;
+      s.scale.setScalar(s.userData.baseScale * pulse * 1.7);
+      s.material.opacity = 0.75 + Math.sin(t * 2.5 + s.position.x * 50) * 0.15;
     });
 
     if (focusTarget) {
@@ -202,7 +204,10 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
       hotspotMeshes.forEach((s) => {
         const isMatch = s.userData.muscle === muscleId;
         s.userData.active = isMatch;
-        s.material.color.setHex(isMatch ? COLOR_ACTIVE : COLOR_DEFAULT);
+        if (!isMatch) {
+          s.material.opacity = 0;
+          s.scale.setScalar(s.userData.baseScale);
+        }
         if (isMatch) matches.push(s.position);
       });
       if (matches.length) {
@@ -219,7 +224,8 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
     clearHighlight() {
       hotspotMeshes.forEach((s) => {
         s.userData.active = false;
-        s.material.color.setHex(COLOR_DEFAULT);
+        s.material.opacity = 0;
+        s.scale.setScalar(s.userData.baseScale);
       });
       focusTarget = new THREE.Vector3(0, 0, 0);
       desiredAzimuth = 0;
