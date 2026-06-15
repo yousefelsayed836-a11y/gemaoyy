@@ -33,33 +33,96 @@
   <h2 class="ex-section-title"><%= t('ex_muscles_title') %></h2>
   <p class="subtitle"><%= t('ex_muscles_subtitle') %></p>
 
-  <div class="ex-grid">
-    <% muscleGroups.forEach(m => { %>
-      <details class="card ex-card">
-        <summary>
-          <strong><%= lang === 'ar' ? m.name_ar : m.name_en %></strong>
-        </summary>
-        <p class="subtitle small ex-tip"><%= lang === 'ar' ? m.tip_ar : m.tip_en %></p>
-        <ul class="ex-list">
-          <% m.exercises.forEach(ex => { %>
-            <li>
-              <div class="ex-row">
-                <span class="ex-ex-name"><%= lang === 'ar' ? ex.name_ar : ex.name_en %></span>
-                <span class="ex-tags">
-                  <span class="ex-badge ex-badge-<%= ex.equipment %>"><%= t('ex_equipment_' + ex.equipment) %></span>
-                  <span class="ex-badge ex-badge-<%= ex.best_for %>"><%= t('ex_best_for_' + ex.best_for) %></span>
-                </span>
-              </div>
-              <% const alts = lang === 'ar' ? ex.alternatives_ar : ex.alternatives_en; %>
-              <% if (alts && alts.length) { %>
-                <p class="ex-alt"><%= t('ex_alternatives') %>: <%= alts.join(lang === 'ar' ? '، ' : ', ') %></p>
-              <% } %>
-            </li>
-          <% }) %>
-        </ul>
-      </details>
-    <% }) %>
+  <div class="ex-muscle-layout">
+    <div class="ex-viewer-wrap">
+      <div id="muscle-viewer" class="muscle-viewer"></div>
+      <p class="subtitle small ex-viewer-hint"><%= t('ex_viewer_hint') %></p>
+    </div>
+
+    <div class="ex-grid">
+      <% muscleGroups.forEach(m => { %>
+        <details class="card ex-card" data-muscle="<%= m.id %>">
+          <summary>
+            <strong><%= lang === 'ar' ? m.name_ar : m.name_en %></strong>
+          </summary>
+          <p class="subtitle small ex-tip"><%= lang === 'ar' ? m.tip_ar : m.tip_en %></p>
+          <ul class="ex-list">
+            <% m.exercises.forEach(ex => { %>
+              <li>
+                <div class="ex-row">
+                  <span class="ex-ex-name"><%= lang === 'ar' ? ex.name_ar : ex.name_en %></span>
+                  <span class="ex-tags">
+                    <span class="ex-badge ex-badge-<%= ex.equipment %>"><%= t('ex_equipment_' + ex.equipment) %></span>
+                    <span class="ex-badge ex-badge-<%= ex.best_for %>"><%= t('ex_best_for_' + ex.best_for) %></span>
+                  </span>
+                </div>
+                <% const alts = lang === 'ar' ? ex.alternatives_ar : ex.alternatives_en; %>
+                <% if (alts && alts.length) { %>
+                  <p class="ex-alt"><%= t('ex_alternatives') %>: <%= alts.join(lang === 'ar' ? '، ' : ', ') %></p>
+                <% } %>
+              </li>
+            <% }) %>
+          </ul>
+        </details>
+      <% }) %>
+    </div>
   </div>
+
+  <script type="importmap">
+    { "imports": { "three": "/vendor/three/build/three.module.min.js" } }
+  </script>
+  <script type="module">
+    import { initMuscleViewer } from '/js/muscle-viewer.js';
+
+    const hotspots = [
+      { muscle: 'chest', pos: [0, 0.0498, 0.020] },
+      { muscle: 'back', pos: [0, 0.0498, -0.020] },
+      { muscle: 'shoulders', pos: [-0.032, 0.060, 0.008] },
+      { muscle: 'shoulders', pos: [0.032, 0.060, 0.008] },
+      { muscle: 'biceps', pos: [-0.052, 0.043, 0.014] },
+      { muscle: 'biceps', pos: [0.052, 0.043, 0.014] },
+      { muscle: 'triceps', pos: [-0.052, 0.043, -0.014] },
+      { muscle: 'triceps', pos: [0.052, 0.043, -0.014] },
+      { muscle: 'abs', pos: [0, 0.022, 0.018] },
+      { muscle: 'quads', pos: [-0.028, -0.011, 0.016] },
+      { muscle: 'quads', pos: [0.028, -0.011, 0.016] },
+      { muscle: 'hamstrings_glutes', pos: [-0.028, 0.011, -0.018] },
+      { muscle: 'hamstrings_glutes', pos: [0.028, 0.011, -0.018] },
+      { muscle: 'calves', pos: [-0.025, -0.05, -0.014] },
+      { muscle: 'calves', pos: [0.025, -0.05, -0.014] },
+    ];
+
+    const viewerEl = document.getElementById('muscle-viewer');
+    const cards = document.querySelectorAll('.ex-card[data-muscle]');
+
+    const viewer = initMuscleViewer(viewerEl, {
+      glbUrl: '/models/male_muscular_anatomy.glb',
+      hotspots,
+      onSelect: selectMuscle,
+    });
+
+    function selectMuscle(muscleId) {
+      viewer.highlightMuscle(muscleId);
+      cards.forEach((card) => {
+        if (card.dataset.muscle === muscleId) {
+          card.open = true;
+          card.classList.add('ex-card-active');
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          card.classList.remove('ex-card-active');
+        }
+      });
+    }
+
+    cards.forEach((card) => {
+      card.querySelector('summary').addEventListener('click', () => {
+        requestAnimationFrame(() => {
+          if (card.open) selectMuscle(card.dataset.muscle);
+          else viewer.clearHighlight();
+        });
+      });
+    });
+  </script>
 
   <h2 class="ex-section-title"><%= t('ex_cardio_title') %></h2>
   <p class="subtitle"><%= t('ex_cardio_subtitle') %></p>
