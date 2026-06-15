@@ -142,6 +142,7 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
   renderer.domElement.style.cursor = 'grab';
   renderer.domElement.addEventListener('pointerdown', () => {
     renderer.domElement.style.cursor = 'grabbing';
+    desiredAzimuth = null;
   });
   renderer.domElement.addEventListener('pointerup', () => {
     renderer.domElement.style.cursor = 'grab';
@@ -158,13 +159,12 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
   });
 
   let focusTarget = null; // THREE.Vector3 to ease camera target toward
-  let lastFrame = performance.now();
+  let desiredAzimuth = null; // radians: 0 = front view, PI = back view
 
   function animate() {
     requestAnimationFrame(animate);
     const now = performance.now();
     const t = now / 1000;
-    lastFrame = now;
 
     hotspotMeshes.forEach((s) => {
       const pulse = 1 + Math.sin(t * 3 + s.position.x * 50) * 0.15;
@@ -174,6 +174,21 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
 
     if (focusTarget) {
       controls.target.lerp(focusTarget, 0.08);
+    }
+
+    if (desiredAzimuth !== null) {
+      const offset = camera.position.clone().sub(controls.target);
+      const spherical = new THREE.Spherical().setFromVector3(offset);
+      let diff = desiredAzimuth - spherical.theta;
+      diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+      if (Math.abs(diff) < 0.002) {
+        spherical.theta = desiredAzimuth;
+        desiredAzimuth = null;
+      } else {
+        spherical.theta += diff * 0.06;
+      }
+      offset.setFromSpherical(spherical);
+      camera.position.copy(controls.target).add(offset);
     }
 
     controls.update();
@@ -195,6 +210,8 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
         matches.forEach((p) => avg.add(p));
         avg.divideScalar(matches.length);
         focusTarget = avg;
+        controls.autoRotate = false;
+        desiredAzimuth = avg.z >= 0 ? 0 : Math.PI;
       } else {
         focusTarget = new THREE.Vector3(0, 0, 0);
       }
@@ -205,6 +222,8 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
         s.material.color.setHex(COLOR_DEFAULT);
       });
       focusTarget = new THREE.Vector3(0, 0, 0);
+      desiredAzimuth = 0;
+      controls.autoRotate = true;
     },
   };
 }
