@@ -9,18 +9,17 @@
     <% splits.forEach(split => { %>
       <details class="card ex-card">
         <summary>
-          <strong><%= split.name_ar %></strong>
-          <span class="ex-name-en"><%= split.name_en %></span>
+          <strong><%= lang === 'ar' ? split.name_ar : split.name_en %></strong>
         </summary>
-        <p class="subtitle small"><%= split.desc_ar %></p>
+        <p class="subtitle small"><%= lang === 'ar' ? split.desc_ar : split.desc_en %></p>
         <ul class="ex-day-list">
           <% split.days.forEach(day => { %>
             <li>
-              <span class="ex-day-name"><%= day.day_ar %></span>
-              <% if (day.muscles_ar && day.muscles_ar.length) { %>
+              <span class="ex-day-name"><%= lang === 'ar' ? day.day_ar : day.day_en %></span>
+              <% if (day.muscles && day.muscles.length) { %>
                 <span class="ex-day-muscles">
-                  <% day.muscles_ar.forEach(mid => { %>
-                    <span class="ex-badge"><%= muscleById[mid] ? muscleById[mid].name_ar : mid %></span>
+                  <% day.muscles.forEach(mid => { %>
+                    <span class="ex-badge"><%= muscleById[mid] ? (lang === 'ar' ? muscleById[mid].name_ar : muscleById[mid].name_en) : mid %></span>
                   <% }) %>
                 </span>
               <% } %>
@@ -38,22 +37,22 @@
     <% muscleGroups.forEach(m => { %>
       <details class="card ex-card">
         <summary>
-          <strong><%= m.name_ar %></strong>
-          <span class="ex-name-en"><%= m.name_en %></span>
+          <strong><%= lang === 'ar' ? m.name_ar : m.name_en %></strong>
         </summary>
-        <p class="subtitle small ex-tip"><%= m.tip_ar %></p>
+        <p class="subtitle small ex-tip"><%= lang === 'ar' ? m.tip_ar : m.tip_en %></p>
         <ul class="ex-list">
           <% m.exercises.forEach(ex => { %>
             <li>
               <div class="ex-row">
-                <span class="ex-ex-name"><%= ex.name_ar %> <span class="ex-name-en">(<%= ex.name_en %>)</span></span>
+                <span class="ex-ex-name"><%= lang === 'ar' ? ex.name_ar : ex.name_en %></span>
                 <span class="ex-tags">
                   <span class="ex-badge ex-badge-<%= ex.equipment %>"><%= t('ex_equipment_' + ex.equipment) %></span>
                   <span class="ex-badge ex-badge-<%= ex.best_for %>"><%= t('ex_best_for_' + ex.best_for) %></span>
                 </span>
               </div>
-              <% if (ex.alternatives_ar && ex.alternatives_ar.length) { %>
-                <p class="ex-alt"><%= t('ex_alternatives') %>: <%= ex.alternatives_ar.join('، ') %></p>
+              <% const alts = lang === 'ar' ? ex.alternatives_ar : ex.alternatives_en; %>
+              <% if (alts && alts.length) { %>
+                <p class="ex-alt"><%= t('ex_alternatives') %>: <%= alts.join(lang === 'ar' ? '، ' : ', ') %></p>
               <% } %>
             </li>
           <% }) %>
@@ -69,9 +68,9 @@
       <% cardio.forEach(c => { %>
         <li>
           <div class="ex-row">
-            <span class="ex-ex-name"><%= c.name_ar %> <span class="ex-name-en">(<%= c.name_en %>)</span></span>
+            <span class="ex-ex-name"><%= lang === 'ar' ? c.name_ar : c.name_en %></span>
           </div>
-          <p class="ex-alt"><%= c.notes_ar %></p>
+          <p class="ex-alt"><%= lang === 'ar' ? c.notes_ar : c.notes_en %></p>
         </li>
       <% }) %>
     </ul>
@@ -84,8 +83,8 @@
       <% homeResistance.forEach(h => { %>
         <li>
           <div class="ex-row">
-            <span class="ex-ex-name"><%= h.name_ar %> <span class="ex-name-en">(<%= h.name_en %>)</span></span>
-            <span class="ex-tags"><span class="ex-badge"><%= h.muscle_ar %></span></span>
+            <span class="ex-ex-name"><%= lang === 'ar' ? h.name_ar : h.name_en %></span>
+            <span class="ex-tags"><span class="ex-badge"><%= lang === 'ar' ? h.muscle_ar : h.muscle_en %></span></span>
           </div>
         </li>
       <% }) %>
