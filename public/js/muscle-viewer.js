@@ -2,25 +2,25 @@ import * as THREE from '/vendor/three/build/three.module.min.js';
 import { OrbitControls } from '/vendor/three/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/vendor/three/jsm/loaders/GLTFLoader.js';
 
-const COLOR_ACTIVE = 0xff5722;
+const COLOR_ACTIVE = 0x9c2424;
 
-function makeGlowTexture() {
+function makeRingTexture() {
   const size = 128;
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext('2d');
-  const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  grad.addColorStop(0, 'rgba(255,255,255,1)');
-  grad.addColorStop(0.35, 'rgba(255,255,255,0.7)');
-  grad.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, size, size);
+  ctx.filter = 'blur(2px)';
+  ctx.strokeStyle = 'rgba(255,255,255,1)';
+  ctx.lineWidth = size * 0.09;
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2 - ctx.lineWidth, 0, Math.PI * 2);
+  ctx.stroke();
   const tex = new THREE.CanvasTexture(canvas);
   return tex;
 }
 
 export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
-  const glowTexture = makeGlowTexture();
+  const ringTexture = makeRingTexture();
 
   const scene = new THREE.Scene();
   scene.background = null;
@@ -84,12 +84,13 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
   hotspots.forEach((h) => {
     const sprite = new THREE.Sprite(
       new THREE.SpriteMaterial({
-        map: glowTexture,
+        map: ringTexture,
         color: COLOR_ACTIVE,
         transparent: true,
         opacity: 0,
         depthWrite: false,
-        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        blending: THREE.NormalBlending,
       })
     );
     sprite.position.set(h.pos[0], h.pos[1], h.pos[2]);
@@ -117,7 +118,9 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
     const vFov = THREE.MathUtils.degToRad(camera.fov);
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
     const distH = (modelSize.y / 2) / Math.tan(vFov / 2);
-    const distW = (modelSize.x / 2) / Math.tan(hFov / 2);
+    // frame the torso width rather than the full outstretched arm span
+    const torsoHalfWidth = 0.038;
+    const distW = torsoHalfWidth / Math.tan(hFov / 2);
     const dist = Math.max(distH, distW) * 1.15;
     camera.position.set(0, 0, dist);
     camera.lookAt(0, 0, 0);
@@ -169,9 +172,8 @@ export function initMuscleViewer(container, { glbUrl, hotspots, onSelect }) {
 
     hotspotMeshes.forEach((s) => {
       if (!s.userData.active) return;
-      const pulse = 1 + Math.sin(t * 2.5 + s.position.x * 50) * 0.1;
-      s.scale.setScalar(s.userData.baseScale * pulse * 1.7);
-      s.material.opacity = 0.75 + Math.sin(t * 2.5 + s.position.x * 50) * 0.15;
+      s.scale.setScalar(s.userData.baseScale);
+      s.material.opacity = 0.8 + Math.sin(t * 2.5 + s.position.x * 50) * 0.1;
     });
 
     if (focusTarget) {
