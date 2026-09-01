@@ -155,5 +155,8 @@
   "ex_best_for_bulk": "تضخيم",
   "ex_best_for_cut": "تنشيف",
   "ex_best_for_both": "تضخيم وتنشيف",
-  "ex_alternatives": "بدائل"
+  "ex_alternatives": "بدائل",
+
+  "err_404": "الصفحة اللي بتدور عليها مش موجودة.",
+  "btn_back_home": "ارجع للرئيسية"
 }

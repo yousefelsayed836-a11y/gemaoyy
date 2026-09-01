@@ -155,5 +155,8 @@
   "ex_best_for_bulk": "Bulking",
   "ex_best_for_cut": "Cutting",
   "ex_best_for_both": "Bulk & Cut",
-  "ex_alternatives": "Alternatives"
+  "ex_alternatives": "Alternatives",
+
+  "err_404": "The page you're looking for doesn't exist.",
+  "btn_back_home": "Back to Home"
 }

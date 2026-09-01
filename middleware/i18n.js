@@ -15,6 +15,12 @@ function i18n(req, res, next) {
 
   res.locals.lang = lang;
   res.locals.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  res.locals.currentPath = req.path;
+  res.locals.langSwitchUrl = (targetLang) => {
+    const params = { ...req.query, lang: targetLang };
+    const qs = new URLSearchParams(params).toString();
+    return req.path + (qs ? '?' + qs : '');
+  };
   res.locals.t = (key, params) => {
     let text = dict[key] || key;
     if (params) {

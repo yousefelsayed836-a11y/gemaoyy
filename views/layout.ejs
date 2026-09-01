@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= t('brand') %> | Gemaoyy</title>
+  <title><%= t('brand') %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500&family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
@@ -13,25 +13,28 @@
   <header class="navbar">
     <div class="container navbar-inner">
       <a href="/" class="logo"><%= t('brand') %></a>
-      <nav class="nav-links">
-        <a href="/"><%= t('nav_home') %></a>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" id="main-nav">
+        <a href="/" class="<%= currentPath === '/' ? 'nav-active' : '' %>"><%= t('nav_home') %></a>
         <% if (isLoggedIn) { %>
-          <a href="/dashboard"><%= t('nav_dashboard') %></a>
-          <a href="/calories"><%= t('nav_calories') %></a>
-          <a href="/foods"><%= t('nav_foods') %></a>
-          <a href="/body-shape"><%= t('nav_bodyshape') %></a>
-          <a href="/exercises"><%= t('nav_exercises') %></a>
+          <a href="/dashboard" class="<%= currentPath === '/dashboard' ? 'nav-active' : '' %>"><%= t('nav_dashboard') %></a>
+          <a href="/calories" class="<%= currentPath === '/calories' ? 'nav-active' : '' %>"><%= t('nav_calories') %></a>
+          <a href="/foods" class="<%= currentPath === '/foods' ? 'nav-active' : '' %>"><%= t('nav_foods') %></a>
+          <a href="/body-shape" class="<%= currentPath === '/body-shape' ? 'nav-active' : '' %>"><%= t('nav_bodyshape') %></a>
+          <a href="/exercises" class="<%= currentPath === '/exercises' ? 'nav-active' : '' %>"><%= t('nav_exercises') %></a>
           <form action="/logout" method="POST" class="inline-form">
             <button type="submit" class="btn btn-link"><%= t('nav_logout') %></button>
           </form>
         <% } else { %>
-          <a href="/login"><%= t('nav_login') %></a>
-          <a href="/register" class="btn btn-small"><%= t('nav_signup') %></a>
+          <a href="/login" class="<%= currentPath === '/login' ? 'nav-active' : '' %>"><%= t('nav_login') %></a>
+          <a href="/register" class="btn btn-small <%= currentPath === '/register' ? 'nav-active' : '' %>"><%= t('nav_signup') %></a>
         <% } %>
         <span class="lang-switch">
-          <a href="?lang=en" class="<%= lang === 'en' ? 'active' : '' %>">EN</a>
+          <a href="<%= langSwitchUrl('en') %>" class="<%= lang === 'en' ? 'active' : '' %>">EN</a>
           /
-          <a href="?lang=ar" class="<%= lang === 'ar' ? 'active' : '' %>">عربي</a>
+          <a href="<%= langSwitchUrl('ar') %>" class="<%= lang === 'ar' ? 'active' : '' %>">عربي</a>
         </span>
       </nav>
     </div>
@@ -46,5 +49,20 @@
       <p>&copy; <%= new Date().getFullYear() %> <%= t('footer_text') %></p>
     </div>
   </footer>
+
+  <script>
+    const hamburger = document.querySelector('.hamburger');
+    const nav = document.getElementById('main-nav');
+    hamburger.addEventListener('click', () => {
+      const open = nav.classList.toggle('nav-open');
+      hamburger.setAttribute('aria-expanded', open);
+    });
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+        nav.classList.remove('nav-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  </script>
 </body>
 </html>
